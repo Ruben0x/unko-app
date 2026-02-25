@@ -1,0 +1,29 @@
+export type CheckSummary = {
+  id: string;
+  photoUrl: string | null;
+};
+
+export type ItemSummary = {
+  id: string;
+  title: string;
+  type: "PLACE" | "FOOD";
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  description: string | null;
+  location: string | null;
+  externalUrl: string | null;
+  imageUrl: string | null;
+  createdAt: Date | string;
+  createdBy: {
+    id: string;
+    name: string | null;
+    image: string | null;
+  };
+  _count: { checks: number };
+  // Vote breakdown (computed from all votes in the query)
+  approvals: number;
+  rejections: number;
+  // The current user's vote, if any
+  myVote: "APPROVE" | "REJECT" | null;
+  // The current user's check-in, if any
+  myCheck: CheckSummary | null;
+};

@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npx prisma init:*)",
+      "Bash(npx prisma:*)",
+      "Bash(npx tsc:*)",
+      "Bash(docker compose:*)",
+      "Bash(echo \"Exit code: $?\")",
+      "Bash(node -e \"require\\(''zod''\\); console.log\\(''zod ok'', require\\(''zod/package.json''\\).version\\)\")",
+      "Bash(echo \"Exit: $?\")"
+    ]
+  }
+}

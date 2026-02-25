@@ -1,0 +1,131 @@
+"use client";
+
+import Image from "next/image";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { UploadPhoto } from "@/components/upload-photo";
+import type { CheckSummary } from "@/types/item";
+
+interface CheckInButtonProps {
+  itemId: string;
+  myCheck: CheckSummary | null;
+}
+
+export function CheckInButton({ itemId, myCheck }: CheckInButtonProps) {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [pendingUrl, setPendingUrl] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const alreadyChecked = myCheck !== null;
+
+  async function submit(photoUrl?: string) {
+    setSaving(true);
+    setError(null);
+
+    try {
+      const res = await fetch(`/api/items/${itemId}/check`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(photoUrl ? { photoUrl } : {}),
+      });
+
+      const data = (await res.json()) as { error?: string };
+
+      if (!res.ok) {
+        setError(data.error ?? "Error al registrar la visita");
+        return;
+      }
+
+      setOpen(false);
+      setPendingUrl(null);
+      router.refresh();
+    } catch {
+      setError("Error de red. Intenta de nuevo.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      {/* Existing photo thumbnail */}
+      {myCheck?.photoUrl && (
+        <a
+          href={myCheck.photoUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block"
+        >
+          <Image
+            src={myCheck.photoUrl}
+            alt="Tu foto de visita"
+            width={64}
+            height={64}
+            className="rounded-lg object-cover border border-zinc-200"
+          />
+        </a>
+      )}
+
+      {/* Trigger */}
+      <button
+        onClick={() => {
+          setOpen((v) => !v);
+          setError(null);
+          setPendingUrl(null);
+        }}
+        className="text-xs font-medium text-green-700 underline underline-offset-2 hover:text-green-900 text-left"
+      >
+        {alreadyChecked ? "Actualizar foto" : "✓ Registrar visita"}
+      </button>
+
+      {/* Inline panel */}
+      {open && (
+        <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 flex flex-col gap-3">
+          {/* Preview of newly uploaded photo */}
+          {pendingUrl && (
+            <Image
+              src={pendingUrl}
+              alt="Vista previa"
+              width={80}
+              height={80}
+              className="rounded-lg object-cover border border-zinc-200"
+            />
+          )}
+
+          <UploadPhoto
+            label={pendingUrl ? "Cambiar foto" : "Subir foto (opcional)"}
+            onUpload={(url) => setPendingUrl(url)}
+            disabled={saving}
+          />
+
+          {error && (
+            <p className="text-xs text-red-500">{error}</p>
+          )}
+
+          <div className="flex gap-2">
+            <button
+              onClick={() => submit(pendingUrl ?? undefined)}
+              disabled={saving}
+              className="rounded-lg bg-green-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-800 disabled:opacity-50"
+            >
+              {saving ? "Guardando..." : alreadyChecked ? "Actualizar" : "Confirmar visita"}
+            </button>
+            <button
+              onClick={() => {
+                setOpen(false);
+                setPendingUrl(null);
+                setError(null);
+              }}
+              disabled={saving}
+              className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs text-zinc-600 hover:bg-white disabled:opacity-50"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
