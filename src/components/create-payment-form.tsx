@@ -1,0 +1,191 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { CURRENCY_OPTIONS } from "@/lib/constants";
+
+type Participant = { id: string; name: string };
+
+export function CreatePaymentForm({
+  tripId,
+  participants,
+  defaultCurrency,
+  fromId,
+  toId,
+  suggestedAmount,
+  suggestedCurrency,
+}: {
+  tripId: string;
+  participants: Participant[];
+  defaultCurrency: string;
+  fromId?: string;
+  toId?: string;
+  suggestedAmount?: number;
+  suggestedCurrency?: string;
+}) {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  function openModal() {
+    setError(null);
+    setOpen(true);
+  }
+
+  function closeModal() {
+    setOpen(false);
+    setError(null);
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    const fd = new FormData(e.currentTarget);
+
+    const body = {
+      fromParticipantId: fd.get("fromParticipantId") as string,
+      toParticipantId: fd.get("toParticipantId") as string,
+      amount: parseFloat(fd.get("amount") as string),
+      currency: fd.get("currency") as string,
+      paidAt: (fd.get("paidAt") as string) || undefined,
+    };
+
+    try {
+      const res = await fetch(`/api/trips/${tripId}/payments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const data = (await res.json()) as { error?: string };
+
+      if (!res.ok) {
+        setError(data.error ?? "Error al registrar el pago");
+        return;
+      }
+
+      closeModal();
+      router.refresh();
+    } catch {
+      setError("Error de red. Intenta de nuevo.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <>
+      <button
+        onClick={openModal}
+        className="rounded-lg border border-zinc-200 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50 transition-colors"
+      >
+        Registrar pago
+      </button>
+
+      {open && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}
+        >
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="text-base font-semibold text-zinc-900">Registrar pago</h2>
+              <button onClick={closeModal} className="text-zinc-400 hover:text-zinc-600" aria-label="Cerrar">✕</button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="fromParticipantId" className="text-xs font-medium text-zinc-700">
+                    De <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    id="fromParticipantId" name="fromParticipantId" required
+                    defaultValue={fromId ?? ""}
+                    className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                  >
+                    <option value="" disabled>-- Quién paga --</option>
+                    {participants.map((p) => (
+                      <option key={p.id} value={p.id}>{p.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="toParticipantId" className="text-xs font-medium text-zinc-700">
+                    A <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    id="toParticipantId" name="toParticipantId" required
+                    defaultValue={toId ?? ""}
+                    className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                  >
+                    <option value="" disabled>-- Quién recibe --</option>
+                    {participants.map((p) => (
+                      <option key={p.id} value={p.id}>{p.name}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="payment-amount" className="text-xs font-medium text-zinc-700">
+                    Monto <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="payment-amount" name="amount" type="number" min="0.01" step="0.01" required
+                    defaultValue={suggestedAmount}
+                    placeholder="0.00"
+                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="payment-currency" className="text-xs font-medium text-zinc-700">Moneda</label>
+                  <select
+                    id="payment-currency" name="currency"
+                    defaultValue={suggestedCurrency ?? defaultCurrency}
+                    className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                  >
+                    {CURRENCY_OPTIONS.map((c) => (
+                      <option key={c.value} value={c.value}>{c.label}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label htmlFor="paidAt" className="text-xs font-medium text-zinc-700">Fecha del pago</label>
+                <input
+                  id="paidAt" name="paidAt" type="date"
+                  className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                />
+              </div>
+
+              {error && (
+                <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
+              )}
+
+              <div className="flex justify-end gap-2 pt-1">
+                <button
+                  type="button" onClick={closeModal} disabled={loading}
+                  className="rounded-lg border border-zinc-200 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50 disabled:opacity-50"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit" disabled={loading}
+                  className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
+                >
+                  {loading ? "Guardando..." : "Confirmar pago"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}

@@ -1,0 +1,192 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { CURRENCY_OPTIONS } from "@/lib/constants";
+
+type TripData = {
+  id: string;
+  name: string;
+  description: string | null;
+  destination: string | null;
+  startDate: string | Date | null;
+  endDate: string | Date | null;
+  defaultCurrency: string;
+};
+
+function toDateInput(d: string | Date | null): string {
+  if (!d) return "";
+  const date = new Date(d);
+  return date.toISOString().split("T")[0];
+}
+
+export function EditTripForm({ trip }: { trip: TripData }) {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  function openModal() {
+    setError(null);
+    setOpen(true);
+  }
+
+  function closeModal() {
+    setOpen(false);
+    setError(null);
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    const fd = new FormData(e.currentTarget);
+
+    const body: Record<string, string | undefined> = {
+      name: (fd.get("name") as string).trim(),
+      defaultCurrency: fd.get("defaultCurrency") as string,
+    };
+
+    const description = (fd.get("description") as string).trim();
+    const destination = (fd.get("destination") as string).trim();
+    const startDate = fd.get("startDate") as string;
+    const endDate = fd.get("endDate") as string;
+
+    body.description = description;
+    body.destination = destination;
+    body.startDate = startDate;
+    body.endDate = endDate;
+
+    try {
+      const res = await fetch(`/api/trips/${trip.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const data = (await res.json()) as { error?: string };
+
+      if (!res.ok) {
+        setError(data.error ?? "Error al guardar los cambios");
+        return;
+      }
+
+      closeModal();
+      router.refresh();
+    } catch {
+      setError("Error de red. Intenta de nuevo.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <>
+      <button
+        onClick={openModal}
+        className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs text-zinc-600 hover:bg-zinc-50 transition-colors"
+      >
+        Editar viaje
+      </button>
+
+      {open && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}
+        >
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="text-base font-semibold text-zinc-900">Editar viaje</h2>
+              <button onClick={closeModal} className="text-zinc-400 hover:text-zinc-600" aria-label="Cerrar">✕</button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1">
+                <label htmlFor="edit-name" className="text-xs font-medium text-zinc-700">
+                  Nombre <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="edit-name" name="name" type="text" required
+                  defaultValue={trip.name}
+                  className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label htmlFor="edit-destination" className="text-xs font-medium text-zinc-700">Destino</label>
+                <input
+                  id="edit-destination" name="destination" type="text"
+                  defaultValue={trip.destination ?? ""}
+                  placeholder="Ej: Tokyo, Osaka"
+                  className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="edit-startDate" className="text-xs font-medium text-zinc-700">Inicio</label>
+                  <input
+                    id="edit-startDate" name="startDate" type="date"
+                    defaultValue={toDateInput(trip.startDate)}
+                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="edit-endDate" className="text-xs font-medium text-zinc-700">Término</label>
+                  <input
+                    id="edit-endDate" name="endDate" type="date"
+                    defaultValue={toDateInput(trip.endDate)}
+                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label htmlFor="edit-currency" className="text-xs font-medium text-zinc-700">Moneda principal</label>
+                <select
+                  id="edit-currency" name="defaultCurrency"
+                  defaultValue={trip.defaultCurrency}
+                  className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                >
+                  {CURRENCY_OPTIONS.map((c) => (
+                    <option key={c.value} value={c.value}>{c.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label htmlFor="edit-description" className="text-xs font-medium text-zinc-700">Descripción</label>
+                <textarea
+                  id="edit-description" name="description" rows={3}
+                  defaultValue={trip.description ?? ""}
+                  placeholder="Notas sobre el viaje (opcional)"
+                  className="resize-none rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                />
+              </div>
+
+              {error && (
+                <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
+              )}
+
+              <div className="flex justify-end gap-2 pt-1">
+                <button
+                  type="button" onClick={closeModal} disabled={loading}
+                  className="rounded-lg border border-zinc-200 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50 disabled:opacity-50"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit" disabled={loading}
+                  className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
+                >
+                  {loading ? "Guardando..." : "Guardar cambios"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}

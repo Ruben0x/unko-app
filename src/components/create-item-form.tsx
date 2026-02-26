@@ -51,7 +51,7 @@ const FIELDS: Field[] = [
   },
 ];
 
-export function CreateItemForm() {
+export function CreateItemForm({ tripId }: { tripId: string }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -80,6 +80,7 @@ export function CreateItemForm() {
     const body: Record<string, string | undefined> = {
       title: (fd.get("title") as string).trim(),
       type: fd.get("type") as string,
+      tripId,
     };
 
     const description = (fd.get("description") as string).trim();

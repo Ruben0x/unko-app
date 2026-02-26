@@ -2,6 +2,8 @@ import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { CheckInButton } from "@/components/check-in-button";
 import { VoteButtons } from "@/components/vote-buttons";
+import { AddToItineraryButton } from "@/components/add-to-itinerary-button";
+import { DeleteItemButton } from "@/components/delete-item-button";
 import type { ItemSummary } from "@/types/item";
 
 // ─── Labels / colors ───────────────────────────────────────────────────────────
@@ -28,11 +30,17 @@ function ItemCard({
   item,
   required,
   isOwner,
+  isAdmin,
+  tripId,
 }: {
   item: ItemSummary;
   required: number;
   isOwner: boolean;
+  isAdmin: boolean;
+  tripId: string;
 }) {
+  const canDelete = isOwner || isAdmin;
+
   return (
     <div className="rounded-xl border border-zinc-200 bg-white shadow-sm flex flex-col overflow-hidden">
       {/* Cover image */}
@@ -53,7 +61,7 @@ function ItemCard({
           <h3 className="font-semibold text-zinc-900 leading-snug">
             {item.title}
           </h3>
-          <div className="flex shrink-0 gap-1.5">
+          <div className="flex shrink-0 items-center gap-1.5">
             <span
               className={`rounded-full px-2 py-0.5 text-xs font-medium ${TYPE_COLORS[item.type]}`}
             >
@@ -64,6 +72,7 @@ function ItemCard({
             >
               {STATUS_LABELS[item.status]}
             </span>
+            {canDelete && <DeleteItemButton itemId={item.id} />}
           </div>
         </div>
 
@@ -144,10 +153,32 @@ function ItemCard({
           </div>
         )}
 
-        {/* Check-in — only for APPROVED items */}
+        {/* Check-in photos from all users */}
+        {item.status === "APPROVED" && item.checks.some((c) => c.photoUrl) && (
+          <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+            {item.checks
+              .filter((c) => c.photoUrl)
+              .map((c) => (
+                <div
+                  key={c.id}
+                  className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg"
+                >
+                  <Image
+                    src={c.photoUrl!}
+                    alt="Foto de visita"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              ))}
+          </div>
+        )}
+
+        {/* APPROVED actions: check-in + add to itinerary */}
         {item.status === "APPROVED" && (
-          <div className="mt-3 border-t border-zinc-100 pt-3">
+          <div className="mt-3 border-t border-zinc-100 pt-3 flex items-center justify-between gap-2">
             <CheckInButton itemId={item.id} myCheck={item.myCheck} />
+            <AddToItineraryButton tripId={tripId} itemId={item.id} title={item.title} />
           </div>
         )}
       </div>
@@ -157,9 +188,18 @@ function ItemCard({
 
 // ─── Item List (Server Component) ─────────────────────────────────────────────
 
-export async function ItemList({ currentUserId }: { currentUserId: string }) {
-  const [rawItems, totalActiveUsers] = await Promise.all([
+export async function ItemList({
+  currentUserId,
+  tripId,
+  isAdmin = false,
+}: {
+  currentUserId: string;
+  tripId: string;
+  isAdmin?: boolean;
+}) {
+  const [rawItems, registeredParticipants] = await Promise.all([
     prisma.item.findMany({
+      where: { tripId },
       select: {
         id: true,
         title: true,
@@ -169,6 +209,7 @@ export async function ItemList({ currentUserId }: { currentUserId: string }) {
         location: true,
         externalUrl: true,
         imageUrl: true,
+        tripId: true,
         createdAt: true,
         updatedAt: true,
         createdBy: {
@@ -181,31 +222,40 @@ export async function ItemList({ currentUserId }: { currentUserId: string }) {
         votes: {
           select: { userId: true, value: true },
         },
-        // Current user's check, if any
+        // All check-ins (latest 20) — used for the photo gallery and to derive myCheck
         checks: {
-          where: { userId: currentUserId },
-          select: { id: true, photoUrl: true },
-          take: 1,
+          select: { id: true, photoUrl: true, userId: true },
+          orderBy: { createdAt: "desc" },
+          take: 20,
         },
       },
       orderBy: { createdAt: "desc" },
     }),
-    prisma.user.count({ where: { status: "ACTIVE" } }),
+    // Threshold is based on REGISTERED active participants of this trip
+    prisma.tripParticipant.count({
+      where: { tripId, type: "REGISTERED", user: { status: "ACTIVE" } },
+    }),
   ]);
 
-  const required = Math.floor(totalActiveUsers / 2) + 1;
+  const required = Math.floor(registeredParticipants / 2) + 1;
 
-  const items: ItemSummary[] = rawItems.map((item) => ({
-    ...item,
-    approvals: item.votes.filter((v) => v.value === "APPROVE").length,
-    rejections: item.votes.filter((v) => v.value === "REJECT").length,
-    myVote:
-      (item.votes.find((v) => v.userId === currentUserId)?.value as
-        | "APPROVE"
-        | "REJECT"
-        | undefined) ?? null,
-    myCheck: item.checks[0] ?? null,
-  }));
+  const items: ItemSummary[] = rawItems.map((item) => {
+    const myRawCheck = item.checks.find((c) => c.userId === currentUserId);
+    return {
+      ...item,
+      approvals: item.votes.filter((v) => v.value === "APPROVE").length,
+      rejections: item.votes.filter((v) => v.value === "REJECT").length,
+      myVote:
+        (item.votes.find((v) => v.userId === currentUserId)?.value as
+          | "APPROVE"
+          | "REJECT"
+          | undefined) ?? null,
+      myCheck: myRawCheck
+        ? { id: myRawCheck.id, photoUrl: myRawCheck.photoUrl }
+        : null,
+      checks: item.checks.map(({ id, photoUrl }) => ({ id, photoUrl })),
+    };
+  });
 
   if (items.length === 0) {
     return (
@@ -223,6 +273,8 @@ export async function ItemList({ currentUserId }: { currentUserId: string }) {
           item={item}
           required={required}
           isOwner={item.createdBy.id === currentUserId}
+          isAdmin={isAdmin}
+          tripId={tripId}
         />
       ))}
     </div>

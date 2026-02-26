@@ -17,6 +17,7 @@ async function requireActiveSession() {
 const createItemSchema = z.object({
   title: z.string().trim().min(1, "Title is required").max(255),
   type: z.enum(["PLACE", "FOOD"], { error: "Type must be PLACE or FOOD" }),
+  tripId: z.string().cuid("tripId must be a valid CUID"),
   description: z.string().trim().max(1000).optional(),
   location: z.string().trim().max(500).optional(),
   externalUrl: z
@@ -92,7 +93,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { title, type, description, location, externalUrl, imageUrl } = result.data;
+  const { title, type, tripId, description, location, externalUrl, imageUrl } = result.data;
 
   // ── Double-submit protection ──────────────────────────────────────────────────
   // Reject if the same user created an identical title+type within the last 30s.
@@ -133,6 +134,7 @@ export async function POST(req: NextRequest) {
         imageUrl: imageUrl ?? null,
         status: "PENDING",
         createdById: userId,
+        tripId,
       },
       select: itemSelect,
     });
@@ -143,9 +145,11 @@ export async function POST(req: NextRequest) {
     });
 
     // 3. Check whether the single auto-vote already meets the threshold.
-    //    This happens when there is only one active user in the group.
-    const totalActiveUsers = await tx.user.count({ where: { status: "ACTIVE" } });
-    const threshold = Math.floor(totalActiveUsers / 2) + 1;
+    //    This happens when the trip has only one registered participant (the creator).
+    const registeredParticipants = await tx.tripParticipant.count({
+      where: { tripId, type: "REGISTERED", user: { status: "ACTIVE" } },
+    });
+    const threshold = Math.floor(registeredParticipants / 2) + 1;
 
     let finalStatus = newItem.status;
     if (threshold === 1) {
@@ -159,7 +163,7 @@ export async function POST(req: NextRequest) {
         status: "APPROVED",
         triggeredBy: userId,
         reason: "auto_vote_threshold",
-        summary: { approvals: 1, rejections: 0, required: threshold, totalActiveUsers },
+        summary: { approvals: 1, rejections: 0, required: threshold, registeredParticipants },
       });
     }
 

@@ -61,8 +61,8 @@ export async function POST(
     const output = await prisma.$transaction(async (tx) => {
       // 1. Lock the Item row exclusively.
       const locked = await tx.$queryRaw<
-        Array<{ id: string; status: string; createdById: string }>
-      >`SELECT id, status::text AS status, "createdById" FROM "Item" WHERE id = ${itemId} FOR UPDATE`;
+        Array<{ id: string; status: string; createdById: string; tripId: string }>
+      >`SELECT id, status::text AS status, "createdById", "tripId" FROM "Item" WHERE id = ${itemId} FOR UPDATE`;
 
       if (locked.length === 0) {
         throw { code: "NOT_FOUND" };
@@ -84,15 +84,18 @@ export async function POST(
         select: { id: true, value: true },
       });
 
-      // 3. Count votes and active users inside the lock boundary.
-      const [approvals, rejections, totalActiveUsers] = await Promise.all([
+      // 3. Count votes and trip registered participants inside the lock boundary.
+      const tripId = locked[0].tripId;
+      const [approvals, rejections, registeredParticipants] = await Promise.all([
         tx.vote.count({ where: { itemId, value: "APPROVE" } }),
         tx.vote.count({ where: { itemId, value: "REJECT" } }),
-        tx.user.count({ where: { status: "ACTIVE" } }),
+        tx.tripParticipant.count({
+          where: { tripId, type: "REGISTERED", user: { status: "ACTIVE" } },
+        }),
       ]);
 
-      // 4. Simple majority: floor(active_users / 2) + 1
-      const required = Math.floor(totalActiveUsers / 2) + 1;
+      // 4. Simple majority: floor(registered_participants / 2) + 1
+      const required = Math.floor(registeredParticipants / 2) + 1;
 
       let newStatus: "PENDING" | "APPROVED" | "REJECTED" = "PENDING";
       if (approvals >= required) newStatus = "APPROVED";
@@ -108,7 +111,7 @@ export async function POST(
       return {
         item,
         vote,
-        summary: { approvals, rejections, required, totalActiveUsers },
+        summary: { approvals, rejections, required, registeredParticipants },
       };
     });
 

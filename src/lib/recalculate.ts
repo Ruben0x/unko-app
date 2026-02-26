@@ -2,38 +2,40 @@ import type { TransactionClient } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
 
 /**
- * Recalculates the status of every PENDING item using the current active-user
- * count as the threshold.
+ * Recalculates the status of every PENDING item using the registered active
+ * participant count of each item's trip as the threshold.
  *
- * Called inside a $transaction whenever the number of ACTIVE users changes
- * (user deactivated). Past votes are immutable and count regardless of the
- * voter's current status.
+ * Called inside a $transaction whenever a user is deactivated. Past votes are
+ * immutable and count regardless of the voter's current status.
  *
  * Returns the number of items whose status changed.
  */
 export async function recalculatePendingItems(
   tx: TransactionClient,
 ): Promise<number> {
-  const totalActiveUsers = await tx.user.count({ where: { status: "ACTIVE" } });
-  const threshold = Math.floor(totalActiveUsers / 2) + 1;
-
-  // Edge case: if there are no active users, skip recalculation.
-  if (totalActiveUsers === 0) {
-    logger.warn("recalculate.skipped", { reason: "no_active_users" });
-    return 0;
-  }
-
-  // Fetch IDs of all PENDING items
+  // 1. Fetch all pending items with their tripId.
   const pendingItems = await tx.item.findMany({
     where: { status: "PENDING" },
-    select: { id: true },
+    select: { id: true, tripId: true },
   });
 
   if (pendingItems.length === 0) return 0;
 
   const pendingIds = pendingItems.map((i) => i.id);
 
-  // Aggregate vote counts per item and value in a single query
+  // 2. Compute the majority threshold for each unique trip involved.
+  const tripIds = [...new Set(pendingItems.map((i) => i.tripId))];
+
+  const thresholdByTrip = new Map<string, number>();
+  for (const tripId of tripIds) {
+    const count = await tx.tripParticipant.count({
+      where: { tripId, type: "REGISTERED", user: { status: "ACTIVE" } },
+    });
+    // If no active participants remain, use Infinity so no item auto-resolves.
+    thresholdByTrip.set(tripId, count === 0 ? Infinity : Math.floor(count / 2) + 1);
+  }
+
+  // 3. Aggregate vote counts per item in a single query.
   const voteCounts = await tx.vote.groupBy({
     by: ["itemId", "value"],
     where: { itemId: { in: pendingIds } },
@@ -54,7 +56,9 @@ export async function recalculatePendingItems(
   const toApprove: string[] = [];
   const toReject: string[] = [];
 
-  for (const [itemId, { approvals, rejections }] of counts) {
+  for (const { id: itemId, tripId } of pendingItems) {
+    const threshold = thresholdByTrip.get(tripId) ?? Infinity;
+    const { approvals = 0, rejections = 0 } = counts.get(itemId) ?? {};
     if (approvals >= threshold) toApprove.push(itemId);
     else if (rejections >= threshold) toReject.push(itemId);
   }
@@ -78,8 +82,7 @@ export async function recalculatePendingItems(
   }
 
   logger.info("recalculate.done", {
-    totalActiveUsers,
-    threshold,
+    tripsAffected: tripIds.length,
     pendingChecked: pendingIds.length,
     approved: toApprove.length,
     rejected: toReject.length,

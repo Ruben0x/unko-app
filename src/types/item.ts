@@ -12,6 +12,7 @@ export type ItemSummary = {
   location: string | null;
   externalUrl: string | null;
   imageUrl: string | null;
+  tripId: string;
   createdAt: Date | string;
   createdBy: {
     id: string;
@@ -26,4 +27,6 @@ export type ItemSummary = {
   myVote: "APPROVE" | "REJECT" | null;
   // The current user's check-in, if any
   myCheck: CheckSummary | null;
+  // All check-ins (latest 20), for the photo gallery
+  checks: CheckSummary[];
 };

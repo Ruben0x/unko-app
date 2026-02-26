@@ -8,9 +8,12 @@ const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const session = req.auth;
+  const { nextUrl } = req;
 
   if (!session?.user) {
-    return NextResponse.redirect(new URL("/api/auth/signin", req.url));
+    const signInUrl = new URL("/auth/signin", req.url);
+    signInUrl.searchParams.set("callbackUrl", nextUrl.pathname + nextUrl.search);
+    return NextResponse.redirect(signInUrl);
   }
 
   if (session.user.status !== "ACTIVE") {
