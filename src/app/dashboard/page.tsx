@@ -121,57 +121,79 @@ function TripCard({ trip }: { trip: TripSummary }) {
   return (
     <Link
       href={`/trips/${trip.id}`}
-      className="group flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+      className="group flex flex-col rounded-2xl border border-zinc-100 bg-white shadow-sm ring-1 ring-black/3 hover:shadow-lg hover:border-zinc-200 transition-all overflow-hidden"
     >
-      <div className="flex items-start justify-between gap-2">
-        <h3 className="font-semibold leading-snug text-zinc-900 transition-colors group-hover:text-zinc-700">
-          {trip.name}
-        </h3>
-        <span className="shrink-0 rounded-full border border-zinc-200 px-2 py-0.5 text-xs text-zinc-500">
-          {ROLE_LABELS[trip.myRole]}
-        </span>
-      </div>
+      {/* Top accent bar */}
+      <div className="h-1.5 w-full bg-linear-to-r from-zinc-300 via-zinc-200 to-zinc-100" />
 
-      {trip.destination && (
-        <p className="text-sm text-zinc-500">📍 {trip.destination}</p>
-      )}
+      <div className="flex flex-col gap-3 p-5">
+        {/* Title + role badge */}
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="font-semibold leading-snug text-zinc-900 group-hover:text-zinc-700 transition-colors">
+            {trip.name}
+          </h3>
+          <span className="shrink-0 rounded-full border border-zinc-200 bg-zinc-50 px-2.5 py-0.5 text-xs font-medium text-zinc-500">
+            {ROLE_LABELS[trip.myRole]}
+          </span>
+        </div>
 
-      {(start || end) && (
-        <p className="text-xs text-zinc-400">
-          {start && end ? `${start} – ${end}` : (start ?? end)}
-        </p>
-      )}
-
-      {trip.description && (
-        <p className="line-clamp-2 text-sm text-zinc-500">{trip.description}</p>
-      )}
-
-      <div className="mt-auto flex items-center justify-between border-t border-zinc-100 pt-3 text-xs text-zinc-400">
-        <span>
-          {trip._count.participants} participante
-          {trip._count.participants !== 1 ? "s" : ""}
-        </span>
-        <span>
-          {trip._count.items} propuesta{trip._count.items !== 1 ? "s" : ""}
-        </span>
-        <span className="font-medium text-zinc-500">
-          {CURRENCY_SYMBOLS[trip.defaultCurrency] ?? trip.defaultCurrency}
-        </span>
-      </div>
-
-      <div className="flex items-center gap-2">
-        {trip.createdBy.image && (
-          <Image
-            src={trip.createdBy.image}
-            alt={trip.createdBy.name ?? ""}
-            width={16}
-            height={16}
-            className="rounded-full"
-          />
+        {/* Destination */}
+        {trip.destination && (
+          <p className="flex items-center gap-1.5 text-sm text-zinc-500">
+            <span>📍</span>
+            <span>{trip.destination}</span>
+          </p>
         )}
-        <span className="text-xs text-zinc-400">
-          Creado por {trip.createdBy.name ?? "—"}
-        </span>
+
+        {/* Dates */}
+        {(start || end) && (
+          <p className="text-xs font-medium text-zinc-400">
+            🗓 {start && end ? `${start} – ${end}` : (start ?? end)}
+          </p>
+        )}
+
+        {/* Description */}
+        {trip.description && (
+          <p className="line-clamp-2 text-sm text-zinc-500 leading-relaxed">
+            {trip.description}
+          </p>
+        )}
+
+        {/* Footer */}
+        <div className="mt-auto flex items-center justify-between border-t border-zinc-100 pt-3">
+          <div className="flex items-center gap-3 text-xs text-zinc-400">
+            <span>
+              👥 {trip._count.participants}{" "}
+              {trip._count.participants !== 1 ? "personas" : "persona"}
+            </span>
+            <span>
+              💡 {trip._count.items}{" "}
+              {trip._count.items !== 1 ? "propuestas" : "propuesta"}
+            </span>
+          </div>
+          <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-semibold text-zinc-600">
+            {CURRENCY_SYMBOLS[trip.defaultCurrency] ?? trip.defaultCurrency}
+          </span>
+        </div>
+
+        {/* Created by */}
+        <div className="flex items-center gap-2">
+          {trip.createdBy.image && (
+            <Image
+              src={trip.createdBy.image}
+              alt={trip.createdBy.name ?? ""}
+              width={18}
+              height={18}
+              className="rounded-full ring-1 ring-zinc-200"
+            />
+          )}
+          <span className="text-xs text-zinc-400">
+            Creado por{" "}
+            <span className="font-medium text-zinc-500">
+              {trip.createdBy.name ?? "—"}
+            </span>
+          </span>
+        </div>
       </div>
     </Link>
   );

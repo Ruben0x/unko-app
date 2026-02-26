@@ -42,7 +42,7 @@ function ItemCard({
   const canDelete = isOwner || isAdmin;
 
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white shadow-sm flex flex-col overflow-hidden">
+    <div className="group rounded-2xl border border-zinc-100 bg-white shadow-sm ring-1 ring-black/3 hover:shadow-md hover:border-zinc-200 transition-all flex flex-col overflow-hidden">
       {/* Cover image */}
       {item.imageUrl && (
         <div className="relative h-40 w-full">
@@ -72,7 +72,11 @@ function ItemCard({
             >
               {STATUS_LABELS[item.status]}
             </span>
-            {canDelete && <DeleteItemButton itemId={item.id} />}
+            {canDelete && (
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+              <DeleteItemButton itemId={item.id} />
+            </div>
+          )}
           </div>
         </div>
 
@@ -259,8 +263,8 @@ export async function ItemList({
 
   if (items.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-zinc-300 p-10 text-center text-sm text-zinc-400">
-        No hay items todavía. ¡Agrega el primero!
+      <div className="rounded-2xl border-2 border-dashed border-zinc-200 bg-white/60 p-14 text-center">
+        <p className="text-sm text-zinc-400">No hay propuestas todavía. ¡Agrega la primera!</p>
       </div>
     );
   }

@@ -100,24 +100,26 @@ export default async function TripPage({
   return (
     <div className="min-h-screen bg-zinc-50">
       {/* Header */}
-      <header className="border-b border-zinc-200 bg-white">
+      <header className="border-b border-zinc-200 bg-white shadow-sm">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3 min-w-0">
             <Link
               href="/dashboard"
-              className="shrink-0 text-sm text-zinc-400 hover:text-zinc-700"
+              className="shrink-0 flex items-center gap-1 text-sm text-zinc-400 hover:text-zinc-700 transition-colors"
             >
-              ← Mis viajes
+              ← <span className="hidden sm:inline">Mis viajes</span>
             </Link>
             <span className="text-zinc-200">/</span>
-            <h1 className="text-base font-semibold text-zinc-900 truncate">{trip.name}</h1>
+            <h1 className="text-base font-semibold text-zinc-900 truncate">
+              {trip.name}
+            </h1>
             {trip.destination && (
-              <span className="hidden text-sm text-zinc-400 sm:inline truncate">
-                · {trip.destination}
+              <span className="hidden shrink-0 rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-500 sm:inline">
+                📍 {trip.destination}
               </span>
             )}
             {(trip.startDate || trip.endDate) && (
-              <span className="hidden text-xs text-zinc-400 lg:inline shrink-0">
+              <span className="hidden shrink-0 text-xs text-zinc-400 lg:inline">
                 {trip.startDate && fmt(trip.startDate)}
                 {trip.startDate && trip.endDate && " – "}
                 {trip.endDate && fmt(trip.endDate)}
@@ -127,7 +129,6 @@ export default async function TripPage({
 
           <div className="flex shrink-0 items-center gap-2">
             {isAdmin && <EditTripForm trip={trip} />}
-
             <form
               action={async () => {
                 "use server";
@@ -144,17 +145,17 @@ export default async function TripPage({
           </div>
         </div>
 
-        {/* Tab navigation */}
-        <div className="mx-auto max-w-5xl px-6">
+        {/* Tab navigation — pill style */}
+        <div className="mx-auto max-w-5xl px-6 pb-3">
           <nav className="flex gap-1" aria-label="Pestañas del viaje">
             {TABS.map((tab) => (
               <Link
                 key={tab.id}
                 href={`/trips/${tripId}?tab=${tab.id}`}
-                className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+                className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                   activeTab === tab.id
-                    ? "border-zinc-900 text-zinc-900"
-                    : "border-transparent text-zinc-500 hover:text-zinc-700"
+                    ? "bg-zinc-900 text-white"
+                    : "text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100"
                 }`}
               >
                 {tab.label}
@@ -173,7 +174,7 @@ export default async function TripPage({
             {/* Items column */}
             <div>
               <div className="mb-6 flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-zinc-900">
+                <h2 className="text-base font-semibold text-zinc-900">
                   Propuestas del grupo
                 </h2>
                 <CreateItemForm tripId={tripId} />
@@ -208,11 +209,16 @@ export default async function TripPage({
         {activeTab === "itinerario" && (
           <div>
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-zinc-900">Itinerario</h2>
+              <h2 className="text-base font-semibold text-zinc-900">Itinerario</h2>
               {canEdit && <CreateActivityForm tripId={tripId} />}
             </div>
             <Suspense fallback={<div className="text-sm text-zinc-400">Cargando itinerario...</div>}>
-              <ActivityList tripId={tripId} canEdit={canEdit} />
+              <ActivityList
+                tripId={tripId}
+                canEdit={canEdit}
+                startDate={trip.startDate}
+                endDate={trip.endDate}
+              />
             </Suspense>
           </div>
         )}
@@ -221,7 +227,7 @@ export default async function TripPage({
         {activeTab === "hoteles" && (
           <div>
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-zinc-900">Hoteles</h2>
+              <h2 className="text-base font-semibold text-zinc-900">Hoteles</h2>
               {canEdit && (
                 <CreateHotelForm
                   tripId={tripId}
@@ -239,7 +245,7 @@ export default async function TripPage({
         {activeTab === "gastos" && (
           <div>
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-zinc-900">Gastos</h2>
+              <h2 className="text-base font-semibold text-zinc-900">Gastos</h2>
               {canEdit && (
                 <CreateExpenseForm
                   tripId={tripId}

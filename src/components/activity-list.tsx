@@ -1,12 +1,52 @@
 import { prisma } from "@/lib/prisma";
 import { DeleteActivityButton } from "@/components/delete-activity-button";
+import { CreateActivityForm } from "@/components/create-activity-form";
+import { EditActivityForm } from "@/components/edit-activity-form";
+import { PhotoThumbnail } from "@/components/photo-thumbnail";
+
+function toDateStr(d: Date): string {
+  return d.toISOString().slice(0, 10);
+}
+
+function generateDateRange(start: Date, end: Date): string[] {
+  const dates: string[] = [];
+  let current = toDateStr(start);
+  const endStr = toDateStr(end);
+  while (current <= endStr) {
+    dates.push(current);
+    const d = new Date(current + "T00:00:00Z");
+    d.setUTCDate(d.getUTCDate() + 1);
+    current = d.toISOString().slice(0, 10);
+  }
+  return dates;
+}
+
+function parseDateHeader(dateStr: string) {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const date = new Date(y, m - 1, d);
+  return {
+    dayNum: d,
+    weekday: date
+      .toLocaleDateString("es-CL", { weekday: "short" })
+      .replace(".", "")
+      .toUpperCase(),
+    monthYear: date.toLocaleDateString("es-CL", {
+      month: "long",
+      year: "numeric",
+    }),
+  };
+}
 
 export async function ActivityList({
   tripId,
   canEdit,
+  startDate,
+  endDate,
 }: {
   tripId: string;
   canEdit: boolean;
+  startDate?: Date | null;
+  endDate?: Date | null;
 }) {
   const activities = await prisma.activity.findMany({
     where: { tripId },
@@ -18,89 +58,254 @@ export async function ActivityList({
       activityDate: true,
       activityTime: true,
       notes: true,
+      photoUrl: true,
       createdAt: true,
       item: { select: { id: true, title: true } },
     },
-    orderBy: [{ activityDate: "asc" }, { createdAt: "asc" }],
+    orderBy: [{ activityDate: "asc" }, { activityTime: "asc" }, { createdAt: "asc" }],
   });
 
-  if (activities.length === 0) {
+  const byDate = new Map<string, typeof activities>();
+  const noDateActivities: typeof activities = [];
+
+  for (const act of activities) {
+    if (act.activityDate) {
+      const key = toDateStr(new Date(act.activityDate));
+      if (!byDate.has(key)) byDate.set(key, []);
+      byDate.get(key)!.push(act);
+    } else {
+      noDateActivities.push(act);
+    }
+  }
+
+  const dateRange =
+    startDate && endDate ? generateDateRange(startDate, endDate) : [];
+
+  const outOfRangeDates = [...byDate.keys()].filter(
+    (d) => !dateRange.includes(d)
+  );
+  outOfRangeDates.sort();
+
+  const hasAnything = activities.length > 0 || dateRange.length > 0;
+
+  if (!hasAnything) {
     return (
-      <div className="rounded-xl border border-dashed border-zinc-300 p-10 text-center text-sm text-zinc-400">
-        No hay actividades todavía. ¡Agrega la primera!
+      <div className="rounded-2xl border-2 border-dashed border-zinc-200 bg-white/60 p-14 text-center">
+        <p className="text-sm text-zinc-400">
+          No hay actividades todavía. ¡Agrega la primera!
+        </p>
       </div>
     );
   }
 
-  // Group by date (or "Sin fecha")
-  const groups = new Map<string, typeof activities>();
-  for (const act of activities) {
-    const key = act.activityDate
-      ? new Date(act.activityDate).toLocaleDateString("es-CL", {
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-        })
-      : "Sin fecha";
-    if (!groups.has(key)) groups.set(key, []);
-    groups.get(key)!.push(act);
-  }
-
   return (
-    <div className="flex flex-col gap-6">
-      {[...groups.entries()].map(([dateLabel, acts]) => (
-        <div key={dateLabel}>
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-400">
-            {dateLabel}
-          </h3>
-          <div className="flex flex-col gap-3">
-            {acts.map((act) => (
-              <div
-                key={act.id}
-                className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm flex items-start gap-4"
-              >
-                {/* Time */}
-                <div className="w-12 shrink-0 text-center">
-                  {act.activityTime ? (
-                    <span className="text-sm font-medium text-zinc-700">{act.activityTime}</span>
-                  ) : (
-                    <span className="text-xs text-zinc-300">—</span>
-                  )}
-                </div>
+    <div className="flex flex-col gap-5">
+      {dateRange.map((dateStr) => (
+        <DayCard
+          key={dateStr}
+          dateStr={dateStr}
+          acts={byDate.get(dateStr) ?? []}
+          tripId={tripId}
+          canEdit={canEdit}
+        />
+      ))}
 
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <p className="font-medium text-zinc-900 text-sm">{act.title}</p>
-                      {act.item && (
-                        <span className="text-xs text-zinc-400">
-                          Desde propuesta: {act.item.title}
-                        </span>
-                      )}
-                    </div>
-                    {canEdit && (
-                      <DeleteActivityButton
-                        tripId={tripId}
-                        activityId={act.id}
-                      />
-                    )}
-                  </div>
-                  {act.description && (
-                    <p className="mt-1 text-sm text-zinc-500">{act.description}</p>
-                  )}
-                  {act.location && (
-                    <p className="mt-1 text-xs text-zinc-400">📍 {act.location}</p>
-                  )}
-                  {act.notes && (
-                    <p className="mt-1 text-xs text-zinc-500 italic">{act.notes}</p>
-                  )}
-                </div>
+      {outOfRangeDates.map((dateStr) => (
+        <DayCard
+          key={dateStr}
+          dateStr={dateStr}
+          acts={byDate.get(dateStr) ?? []}
+          tripId={tripId}
+          canEdit={canEdit}
+        />
+      ))}
+
+      {noDateActivities.length > 0 && (
+        <div className="rounded-2xl border border-zinc-100 bg-white shadow-sm ring-1 ring-black/3 overflow-hidden">
+          {/* Header */}
+          <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-zinc-100">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl bg-zinc-100">
+                <span className="text-xs font-bold text-zinc-400">—</span>
               </div>
+              <p className="text-sm font-semibold text-zinc-700">Sin fecha</p>
+            </div>
+          </div>
+          {/* Activities */}
+          <div className="divide-y divide-zinc-100">
+            {noDateActivities.map((act) => (
+              <ActivityRow
+                key={act.id}
+                act={act}
+                tripId={tripId}
+                canEdit={canEdit}
+              />
             ))}
           </div>
         </div>
-      ))}
+      )}
+    </div>
+  );
+}
+
+// ─── Day card ─────────────────────────────────────────────────────────────────
+
+type Activity = {
+  id: string;
+  title: string;
+  description: string | null;
+  location: string | null;
+  activityDate: Date | null;
+  activityTime: string | null;
+  notes: string | null;
+  photoUrl: string | null;
+  createdAt: Date;
+  item: { id: string; title: string } | null;
+};
+
+function DayCard({
+  dateStr,
+  acts,
+  tripId,
+  canEdit,
+}: {
+  dateStr: string;
+  acts: Activity[];
+  tripId: string;
+  canEdit: boolean;
+}) {
+  const { dayNum, weekday, monthYear } = parseDateHeader(dateStr);
+  const isEmpty = acts.length === 0;
+
+  return (
+    <div className="rounded-2xl border border-zinc-100 bg-white shadow-sm ring-1 ring-black/3 overflow-hidden">
+      {/* Card header */}
+      <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-zinc-100">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl bg-zinc-900 text-white">
+            <span className="text-[9px] font-semibold leading-none tracking-widest opacity-60">
+              {weekday}
+            </span>
+            <span className="text-base font-bold leading-tight">{dayNum}</span>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-zinc-800 capitalize">
+              {monthYear}
+            </p>
+            {!isEmpty && (
+              <p className="text-xs font-medium text-zinc-500">
+                {acts.length} actividad{acts.length !== 1 ? "es" : ""}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {canEdit && (
+          <CreateActivityForm tripId={tripId} defaultDate={dateStr} compact />
+        )}
+      </div>
+
+      {/* Body */}
+      {isEmpty ? (
+        <div className="flex items-center justify-center px-5 py-10">
+          <p className="text-sm font-medium text-zinc-400">☀️ Día libre</p>
+        </div>
+      ) : (
+        <div className="divide-y divide-zinc-100">
+          {acts.map((act) => (
+            <ActivityRow
+              key={act.id}
+              act={act}
+              tripId={tripId}
+              canEdit={canEdit}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Activity row ─────────────────────────────────────────────────────────────
+
+function ActivityRow({
+  act,
+  tripId,
+  canEdit,
+}: {
+  act: Activity;
+  tripId: string;
+  canEdit: boolean;
+}) {
+  const activityForEdit = {
+    id: act.id,
+    title: act.title,
+    description: act.description,
+    location: act.location,
+    activityDate: act.activityDate ? toDateStr(new Date(act.activityDate)) : null,
+    activityTime: act.activityTime,
+    notes: act.notes,
+    photoUrl: act.photoUrl,
+  };
+
+  return (
+    <div className="group flex items-start gap-4 px-5 py-4">
+      {/* Time badge */}
+      <div className="w-14 shrink-0 pt-0.5">
+        {act.activityTime && (
+          <div className="rounded-lg bg-zinc-900 px-2 py-1.5 text-center">
+            <span className="text-xs font-semibold tabular-nums text-white">
+              {act.activityTime}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 min-w-0">
+        <p className="font-semibold text-zinc-900 text-sm leading-snug">
+          {act.title}
+        </p>
+        {act.item && (
+          <span className="mt-0.5 inline-block rounded-full bg-violet-50 border border-violet-100 px-2 py-0.5 text-xs font-medium text-violet-600">
+            {act.item.title}
+          </span>
+        )}
+        {act.description && (
+          <p className="mt-1.5 text-sm text-zinc-600 leading-relaxed">
+            {act.description}
+          </p>
+        )}
+        <div className="mt-2 flex flex-wrap items-center gap-3">
+          {act.location && (
+            <span className="flex items-center gap-1 text-xs font-medium text-zinc-500">
+              <span>📍</span>
+              {act.location}
+            </span>
+          )}
+          {act.notes && (
+            <span className="text-xs text-zinc-500 italic">{act.notes}</span>
+          )}
+        </div>
+      </div>
+
+      {/* Right side: photo with action overlay, or plain action buttons */}
+      {act.photoUrl ? (
+        <div className="flex shrink-0 flex-col items-center gap-1.5 self-start pt-0.5">
+          {canEdit && (
+            <div className="flex items-center justify-center gap-0.5">
+              <EditActivityForm tripId={tripId} activity={activityForEdit} />
+              <DeleteActivityButton tripId={tripId} activityId={act.id} />
+            </div>
+          )}
+          <PhotoThumbnail url={act.photoUrl} alt={act.title} />
+        </div>
+      ) : canEdit ? (
+        <div className="flex shrink-0 items-center gap-1 self-start pt-0.5">
+          <EditActivityForm tripId={tripId} activity={activityForEdit} />
+          <DeleteActivityButton tripId={tripId} activityId={act.id} />
+        </div>
+      ) : null}
     </div>
   );
 }

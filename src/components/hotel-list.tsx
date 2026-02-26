@@ -29,8 +29,10 @@ export async function HotelList({
 
   if (hotels.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-zinc-300 p-10 text-center text-sm text-zinc-400">
-        No hay hoteles todavía. ¡Agrega el primero!
+      <div className="rounded-2xl border-2 border-dashed border-zinc-200 bg-white/60 p-14 text-center">
+        <p className="text-sm text-zinc-400">
+          No hay hoteles todavía. ¡Agrega el primero!
+        </p>
       </div>
     );
   }
@@ -43,62 +45,105 @@ export async function HotelList({
     });
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
       {hotels.map((hotel) => {
         const symbol = CURRENCY_SYMBOLS[hotel.currency as Currency] ?? hotel.currency;
         return (
           <div
             key={hotel.id}
-            className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm"
+            className="group rounded-2xl border border-zinc-100 bg-white shadow-sm ring-1 ring-black/3 hover:shadow-md hover:border-zinc-200 transition-all overflow-hidden"
           >
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
+            {/* Card header strip */}
+            <div className="flex items-start justify-between gap-3 px-5 pt-5 pb-4">
+              <div className="flex items-start gap-3 min-w-0">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-lg">
+                  🏨
+                </div>
+                <div className="min-w-0">
                   {hotel.link ? (
                     <a
                       href={hotel.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-semibold text-zinc-900 hover:underline"
+                      className="font-semibold text-zinc-900 hover:underline underline-offset-2 leading-snug"
                     >
                       {hotel.name}
                     </a>
                   ) : (
-                    <p className="font-semibold text-zinc-900">{hotel.name}</p>
+                    <p className="font-semibold text-zinc-900 leading-snug">
+                      {hotel.name}
+                    </p>
                   )}
-                  <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-600">
+                  <span className="mt-1 inline-block rounded-full bg-blue-50 border border-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-600">
                     {hotel.numberOfNights} noche{hotel.numberOfNights !== 1 ? "s" : ""}
                   </span>
                 </div>
-
-                <p className="mt-1 text-sm text-zinc-500">
-                  {fmtDate(hotel.checkInDate)} → {fmtDate(hotel.checkOutDate)}
-                </p>
-
-                {(hotel.pricePerNight != null || hotel.totalPrice != null) && (
-                  <div className="mt-2 flex flex-wrap gap-3 text-sm">
-                    {hotel.pricePerNight != null && (
-                      <span className="text-zinc-600">
-                        {symbol}{hotel.pricePerNight.toLocaleString("es-CL")} / noche
-                      </span>
-                    )}
-                    {hotel.totalPrice != null && (
-                      <span className="font-medium text-zinc-900">
-                        Total: {symbol}{hotel.totalPrice.toLocaleString("es-CL")} {hotel.currency}
-                      </span>
-                    )}
-                  </div>
-                )}
-
-                {hotel.notes && (
-                  <p className="mt-2 text-xs text-zinc-400 italic">{hotel.notes}</p>
-                )}
               </div>
 
               {canEdit && (
-                <DeleteHotelButton tripId={tripId} hotelId={hotel.id} />
+                <div className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <DeleteHotelButton tripId={tripId} hotelId={hotel.id} />
+                </div>
               )}
             </div>
+
+            {/* Divider */}
+            <div className="mx-5 h-px bg-zinc-100" />
+
+            {/* Dates + pricing */}
+            <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-4">
+              {/* Date range */}
+              <div className="flex items-center gap-2">
+                <div className="rounded-lg bg-zinc-50 border border-zinc-100 px-3 py-1.5 text-center">
+                  <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-400">
+                    Check-in
+                  </p>
+                  <p className="text-sm font-semibold text-zinc-800">
+                    {fmtDate(hotel.checkInDate)}
+                  </p>
+                </div>
+                <span className="text-zinc-300 text-lg">→</span>
+                <div className="rounded-lg bg-zinc-50 border border-zinc-100 px-3 py-1.5 text-center">
+                  <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-400">
+                    Check-out
+                  </p>
+                  <p className="text-sm font-semibold text-zinc-800">
+                    {fmtDate(hotel.checkOutDate)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Pricing */}
+              {(hotel.pricePerNight != null || hotel.totalPrice != null) && (
+                <div className="flex items-center gap-4 text-sm">
+                  {hotel.pricePerNight != null && (
+                    <div className="text-right">
+                      <p className="text-xs text-zinc-400">Por noche</p>
+                      <p className="font-semibold text-zinc-700">
+                        {symbol}{hotel.pricePerNight.toLocaleString("es-CL")}
+                      </p>
+                    </div>
+                  )}
+                  {hotel.totalPrice != null && (
+                    <div className="rounded-xl bg-zinc-900 px-3 py-1.5 text-right">
+                      <p className="text-[10px] font-medium text-zinc-400">Total</p>
+                      <p className="text-sm font-bold text-white">
+                        {symbol}{hotel.totalPrice.toLocaleString("es-CL")}
+                        <span className="ml-1 text-xs font-normal text-zinc-400">
+                          {hotel.currency}
+                        </span>
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {hotel.notes && (
+              <div className="px-5 pb-4">
+                <p className="text-xs text-zinc-400 italic">{hotel.notes}</p>
+              </div>
+            )}
           </div>
         );
       })}

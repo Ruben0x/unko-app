@@ -265,6 +265,7 @@ model Activity {
   activityDate DateTime?
   activityTime String?
   notes        String?
+  photoUrl     String?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 

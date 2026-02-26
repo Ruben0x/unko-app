@@ -17,6 +17,7 @@ const createActivitySchema = z.object({
   activityDate: z.string().optional().or(z.literal("")),
   activityTime: z.string().optional().or(z.literal("")),
   notes: z.string().trim().max(1000).optional(),
+  photoUrl: z.string().url().optional().or(z.literal("")).or(z.null()),
   itemId: z.string().cuid().optional(),
 });
 
@@ -39,7 +40,7 @@ export async function GET(
     where: { tripId },
     select: {
       id: true, title: true, description: true, location: true,
-      activityDate: true, activityTime: true, notes: true, createdAt: true,
+      activityDate: true, activityTime: true, notes: true, photoUrl: true, createdAt: true,
       item: { select: { id: true, title: true } },
     },
     orderBy: [{ activityDate: "asc" }, { createdAt: "asc" }],
@@ -74,7 +75,7 @@ export async function POST(
     return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
   }
 
-  let { title, description, location, activityDate, activityTime, notes, itemId } = result.data;
+  let { title, description, location, activityDate, activityTime, notes, photoUrl, itemId } = result.data;
 
   // If created from an Item, inherit its data as defaults
   if (itemId) {
@@ -99,11 +100,12 @@ export async function POST(
       activityDate: activityDate ? new Date(activityDate) : null,
       activityTime: activityTime || null,
       notes: notes ?? null,
+      photoUrl: photoUrl || null,
       itemId: itemId ?? null,
     },
     select: {
       id: true, title: true, description: true, location: true,
-      activityDate: true, activityTime: true, notes: true, createdAt: true,
+      activityDate: true, activityTime: true, notes: true, photoUrl: true, createdAt: true,
       item: { select: { id: true, title: true } },
     },
   });
