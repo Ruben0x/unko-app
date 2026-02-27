@@ -1,6 +1,7 @@
 export type CheckSummary = {
   id: string;
   photoUrl: string | null;
+  userName: string | null;
 };
 
 export type ItemSummary = {

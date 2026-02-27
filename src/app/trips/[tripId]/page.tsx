@@ -230,6 +230,8 @@ export default async function TripPage({
                   currentUserId={session.user.id}
                   tripId={tripId}
                   isAdmin={isAdmin}
+                  tripStartDate={trip.startDate}
+                  tripEndDate={trip.endDate}
                 />
               </Suspense>
             </div>

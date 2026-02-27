@@ -50,24 +50,6 @@ export function CheckInButton({ itemId, myCheck }: CheckInButtonProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      {/* Existing photo thumbnail */}
-      {myCheck?.photoUrl && (
-        <a
-          href={myCheck.photoUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block"
-        >
-          <Image
-            src={myCheck.photoUrl}
-            alt="Tu foto de visita"
-            width={64}
-            height={64}
-            className="rounded-lg object-cover border border-zinc-200"
-          />
-        </a>
-      )}
-
       {/* Trigger */}
       <button
         onClick={() => {
@@ -75,14 +57,14 @@ export function CheckInButton({ itemId, myCheck }: CheckInButtonProps) {
           setError(null);
           setPendingUrl(null);
         }}
-        className="text-xs font-medium text-green-700 underline underline-offset-2 hover:text-green-900 text-left"
+        className="text-xs font-medium text-green-700 underline underline-offset-2 hover:text-green-900 text-left dark:text-green-400 dark:hover:text-green-300"
       >
         {alreadyChecked ? "Actualizar foto" : "✓ Registrar visita"}
       </button>
 
       {/* Inline panel */}
       {open && (
-        <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 flex flex-col gap-3">
+        <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 flex flex-col gap-3 dark:border-zinc-700 dark:bg-zinc-800">
           {/* Preview of newly uploaded photo */}
           {pendingUrl && (
             <Image
@@ -90,7 +72,7 @@ export function CheckInButton({ itemId, myCheck }: CheckInButtonProps) {
               alt="Vista previa"
               width={80}
               height={80}
-              className="rounded-lg object-cover border border-zinc-200"
+              className="rounded-lg object-cover border border-zinc-200 dark:border-zinc-600"
             />
           )}
 
@@ -101,7 +83,7 @@ export function CheckInButton({ itemId, myCheck }: CheckInButtonProps) {
           />
 
           {error && (
-            <p className="text-xs text-red-500">{error}</p>
+            <p className="text-xs text-red-500 dark:text-red-400">{error}</p>
           )}
 
           <div className="flex gap-2">
@@ -119,7 +101,7 @@ export function CheckInButton({ itemId, myCheck }: CheckInButtonProps) {
                 setError(null);
               }}
               disabled={saving}
-              className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs text-zinc-600 hover:bg-white disabled:opacity-50"
+              className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs text-zinc-600 hover:bg-white disabled:opacity-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
             >
               Cancelar
             </button>

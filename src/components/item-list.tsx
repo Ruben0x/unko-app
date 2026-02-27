@@ -4,6 +4,7 @@ import { CheckInButton } from "@/components/check-in-button";
 import { VoteButtons } from "@/components/vote-buttons";
 import { AddToItineraryButton } from "@/components/add-to-itinerary-button";
 import { DeleteItemButton } from "@/components/delete-item-button";
+import { PhotoThumbnail } from "@/components/photo-thumbnail";
 import type { ItemSummary } from "@/types/item";
 
 // ─── Labels / colors ───────────────────────────────────────────────────────────
@@ -32,12 +33,16 @@ function ItemCard({
   isOwner,
   isAdmin,
   tripId,
+  tripStartDate,
+  tripEndDate,
 }: {
   item: ItemSummary;
   required: number;
   isOwner: boolean;
   isAdmin: boolean;
   tripId: string;
+  tripStartDate?: Date | null;
+  tripEndDate?: Date | null;
 }) {
   const canDelete = isOwner || isAdmin;
 
@@ -159,20 +164,17 @@ function ItemCard({
 
         {/* Check-in photos from all users */}
         {item.status === "APPROVED" && item.checks.some((c) => c.photoUrl) && (
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+          <div className="mt-3 flex gap-3 overflow-x-auto pb-1">
             {item.checks
               .filter((c) => c.photoUrl)
               .map((c) => (
-                <div
-                  key={c.id}
-                  className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg"
-                >
-                  <Image
-                    src={c.photoUrl!}
-                    alt="Foto de visita"
-                    fill
-                    className="object-cover"
-                  />
+                <div key={c.id} className="flex flex-col items-center gap-1 shrink-0">
+                  <PhotoThumbnail url={c.photoUrl!} alt={`Foto de ${c.userName ?? "visita"}`} />
+                  {c.userName && (
+                    <span className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate max-w-[64px] text-center">
+                      {c.userName}
+                    </span>
+                  )}
                 </div>
               ))}
           </div>
@@ -182,7 +184,13 @@ function ItemCard({
         {item.status === "APPROVED" && (
           <div className="mt-3 border-t border-zinc-100 pt-3 flex items-center justify-between gap-2 dark:border-zinc-700">
             <CheckInButton itemId={item.id} myCheck={item.myCheck} />
-            <AddToItineraryButton tripId={tripId} itemId={item.id} title={item.title} />
+            <AddToItineraryButton
+              tripId={tripId}
+              itemId={item.id}
+              title={item.title}
+              tripStartDate={tripStartDate}
+              tripEndDate={tripEndDate}
+            />
           </div>
         )}
       </div>
@@ -196,10 +204,14 @@ export async function ItemList({
   currentUserId,
   tripId,
   isAdmin = false,
+  tripStartDate,
+  tripEndDate,
 }: {
   currentUserId: string;
   tripId: string;
   isAdmin?: boolean;
+  tripStartDate?: Date | null;
+  tripEndDate?: Date | null;
 }) {
   const [rawItems, registeredParticipants] = await Promise.all([
     prisma.item.findMany({
@@ -228,7 +240,12 @@ export async function ItemList({
         },
         // All check-ins (latest 20) — used for the photo gallery and to derive myCheck
         checks: {
-          select: { id: true, photoUrl: true, userId: true },
+          select: {
+            id: true,
+            photoUrl: true,
+            userId: true,
+            user: { select: { name: true } },
+          },
           orderBy: { createdAt: "desc" },
           take: 20,
         },
@@ -255,9 +272,9 @@ export async function ItemList({
           | "REJECT"
           | undefined) ?? null,
       myCheck: myRawCheck
-        ? { id: myRawCheck.id, photoUrl: myRawCheck.photoUrl }
+        ? { id: myRawCheck.id, photoUrl: myRawCheck.photoUrl, userName: myRawCheck.user?.name ?? null }
         : null,
-      checks: item.checks.map(({ id, photoUrl }) => ({ id, photoUrl })),
+      checks: item.checks.map(({ id, photoUrl, user }) => ({ id, photoUrl, userName: user?.name ?? null })),
     };
   });
 
@@ -279,6 +296,8 @@ export async function ItemList({
           isOwner={item.createdBy.id === currentUserId}
           isAdmin={isAdmin}
           tripId={tripId}
+          tripStartDate={tripStartDate}
+          tripEndDate={tripEndDate}
         />
       ))}
     </div>
