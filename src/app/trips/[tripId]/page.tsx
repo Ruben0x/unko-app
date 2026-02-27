@@ -4,6 +4,7 @@ import { auth, signOut } from "@/auth";
 import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { TripMobileMenu } from "@/components/trip-mobile-menu";
 import { ItemList } from "@/components/item-list";
 import { CreateItemForm } from "@/components/create-item-form";
 import { ManageParticipantsPanel } from "@/components/manage-participants-panel";
@@ -98,11 +99,30 @@ export default async function TripPage({
       year: "numeric",
     });
 
+  // Slots for mobile menu (server-rendered nodes passed as props)
+  const signOutSlot = (
+    <form
+      action={async () => {
+        "use server";
+        await signOut({ redirectTo: "/api/auth/signin" });
+      }}
+    >
+      <button
+        type="submit"
+        className="w-full rounded-lg px-4 py-2.5 text-left text-sm text-zinc-600 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-zinc-700"
+      >
+        Cerrar sesión
+      </button>
+    </form>
+  );
+
+  const editSlot = isAdmin ? <EditTripForm trip={trip} /> : null;
+
   return (
     <div className="min-h-screen bg-white dark:bg-[#0E1113]">
       {/* Header */}
       <header className="border-b border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 md:px-6">
           <div className="flex items-center gap-3 min-w-0">
             <Link
               href="/dashboard"
@@ -128,7 +148,8 @@ export default async function TripPage({
             )}
           </div>
 
-          <div className="flex shrink-0 items-center gap-2">
+          {/* Desktop action buttons — hidden on mobile */}
+          <div className="hidden md:flex shrink-0 items-center gap-2">
             {isAdmin && <EditTripForm trip={trip} />}
             <ThemeToggle />
             <form
@@ -145,11 +166,21 @@ export default async function TripPage({
               </button>
             </form>
           </div>
+
+          {/* Mobile hamburger menu */}
+          <TripMobileMenu
+            tripId={tripId}
+            activeTab={activeTab}
+            tripName={trip.name}
+            isAdmin={isAdmin}
+            signOutSlot={signOutSlot}
+            editSlot={editSlot}
+          />
         </div>
 
-        {/* Tab navigation — pill style */}
-        <div className="mx-auto max-w-5xl px-6 pb-3">
-          <nav className="flex gap-1" aria-label="Pestañas del viaje">
+        {/* Tab navigation — hidden on mobile, shown on tablet+ */}
+        <div className="mx-auto max-w-5xl px-4 pb-3 md:px-6">
+          <nav className="hidden md:flex gap-1" aria-label="Pestañas del viaje">
             {TABS.map((tab) => (
               <Link
                 key={tab.id}
@@ -168,12 +199,20 @@ export default async function TripPage({
       </header>
 
       {/* Content */}
-      <main className="mx-auto max-w-5xl px-6 py-8">
+      <main className="mx-auto max-w-5xl px-4 py-6 md:px-6 md:py-8">
 
         {/* ── Propuestas ──────────────────────────────────────────────────── */}
         {activeTab === "propuestas" && (
-          <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
-            {/* Items column */}
+          <div className="flex flex-col gap-6">
+            {/* Participants — collapsible at the top */}
+            <ManageParticipantsPanel
+              tripId={tripId}
+              participants={participants}
+              currentUserId={session.user.id}
+              isAdmin={isAdmin}
+            />
+
+            {/* Items list */}
             <div>
               <div className="mb-6 flex items-center justify-between">
                 <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
@@ -194,16 +233,6 @@ export default async function TripPage({
                 />
               </Suspense>
             </div>
-
-            {/* Participants sidebar */}
-            <div>
-              <ManageParticipantsPanel
-                tripId={tripId}
-                participants={participants}
-                currentUserId={session.user.id}
-                isAdmin={isAdmin}
-              />
-            </div>
           </div>
         )}
 
@@ -212,7 +241,12 @@ export default async function TripPage({
           <div>
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Itinerario</h2>
-              {canEdit && <CreateActivityForm tripId={tripId} />}
+              {/* Hidden on mobile — each day card has its own add button */}
+              {canEdit && (
+                <div className="hidden md:block">
+                  <CreateActivityForm tripId={tripId} />
+                </div>
+              )}
             </div>
             <Suspense fallback={<div className="text-sm text-zinc-400 dark:text-zinc-500">Cargando itinerario...</div>}>
               <ActivityList

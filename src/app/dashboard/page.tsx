@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { InviteUserForm } from "@/components/invite-user-form";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { DashboardMobileMenu } from "@/components/dashboard-mobile-menu";
 import type { TripSummary } from "@/types/trip";
 
 const ROLE_LABELS = { ADMIN: "Admin", EDITOR: "Editor", VIEWER: "Invitado" } as const;
@@ -44,15 +45,39 @@ export default async function DashboardPage() {
 
   const trips = await getTripSummaries(session.user.id);
 
+  const signOutSlot = (
+    <form
+      action={async () => {
+        "use server";
+        await signOut({ redirectTo: "/api/auth/signin" });
+      }}
+    >
+      <button
+        type="submit"
+        className="w-full rounded-lg px-4 py-2.5 text-left text-sm text-zinc-600 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-zinc-700"
+      >
+        Cerrar sesión
+      </button>
+    </form>
+  );
+
+  const inviteSlot = (
+    <div className="w-full">
+      <InviteUserForm />
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-white dark:bg-[#0E1113]">
       {/* Header */}
       <header className="border-b border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-800">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 md:px-6">
           <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
             Planificador de viaje
           </h1>
-          <div className="flex items-center gap-3">
+
+          {/* Desktop actions — hidden on mobile */}
+          <div className="hidden md:flex items-center gap-3">
             <span className="text-sm text-zinc-500 dark:text-zinc-400">{session.user.email}</span>
             <InviteUserForm />
             <ThemeToggle />
@@ -70,11 +95,14 @@ export default async function DashboardPage() {
               </button>
             </form>
           </div>
+
+          {/* Mobile hamburger menu */}
+          <DashboardMobileMenu signOutSlot={signOutSlot} inviteSlot={inviteSlot} />
         </div>
       </header>
 
       {/* Content */}
-      <main className="mx-auto max-w-5xl px-6 py-8">
+      <main className="mx-auto max-w-5xl px-4 py-6 md:px-6 md:py-8">
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">Mis viajes</h2>
           <Link

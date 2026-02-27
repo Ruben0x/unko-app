@@ -123,7 +123,7 @@ export async function ActivityList({
       {noDateActivities.length > 0 && (
         <div className="rounded-2xl border border-zinc-100 bg-white shadow-sm ring-1 ring-black/3 overflow-hidden dark:border-zinc-700 dark:bg-zinc-800 dark:ring-white/5">
           {/* Header */}
-          <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-zinc-100 dark:border-zinc-700">
+          <div className="flex items-center justify-between gap-3 px-4 py-3.5 border-b border-zinc-100 md:px-5 md:py-4 dark:border-zinc-700">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-700">
                 <span className="text-xs font-bold text-zinc-400 dark:text-zinc-500">—</span>
@@ -180,7 +180,7 @@ function DayCard({
   return (
     <div className="rounded-2xl border border-zinc-100 bg-white shadow-sm ring-1 ring-black/3 overflow-hidden dark:border-zinc-700 dark:bg-zinc-800 dark:ring-white/5">
       {/* Card header */}
-      <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-zinc-100 dark:border-zinc-700">
+      <div className="flex items-center justify-between gap-3 px-4 py-3.5 border-b border-zinc-100 md:px-5 md:py-4 dark:border-zinc-700">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900">
             <span className="text-[9px] font-semibold leading-none tracking-widest opacity-60">
@@ -249,7 +249,7 @@ function ActivityRow({
   };
 
   return (
-    <div className="group flex items-start gap-4 px-5 py-4">
+    <div className="group flex items-start gap-3 px-4 py-3.5 md:gap-4 md:px-5 md:py-4">
       {/* Time badge */}
       <div className="w-14 shrink-0 pt-0.5">
         {act.activityTime && (

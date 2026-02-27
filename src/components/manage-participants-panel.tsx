@@ -248,55 +248,87 @@ export function ManageParticipantsPanel({
   currentUserId: string;
   isAdmin: boolean;
 }) {
-  return (
-    <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
-      <h3 className="mb-4 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-        Participantes ({participants.length})
-      </h3>
+  const [open, setOpen] = useState(false);
 
-      <ul className="flex flex-col gap-3">
-        {participants.map((p) =>
-          isAdmin ? (
-            <ParticipantRow
-              key={p.id}
-              participant={p}
-              tripId={tripId}
-              currentUserId={currentUserId}
-            />
-          ) : (
-            <li key={p.id} className="flex items-center gap-3">
-              {p.user?.image ? (
-                <Image
-                  src={p.user.image}
-                  alt={p.name}
-                  width={28}
-                  height={28}
-                  className="rounded-full"
+  return (
+    <div className="rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
+      {/* Collapsible header */}
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left"
+        aria-expanded={open}
+      >
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+            Participantes
+          </span>
+          <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-500 dark:bg-zinc-700 dark:text-zinc-400">
+            {participants.length}
+          </span>
+        </div>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={`shrink-0 text-zinc-400 transition-transform duration-200 dark:text-zinc-500 ${open ? "rotate-180" : ""}`}
+        >
+          <polyline points="4 6 8 10 12 6" />
+        </svg>
+      </button>
+
+      {/* Collapsible body */}
+      {open && (
+        <div className="border-t border-zinc-100 px-5 pb-5 pt-4 dark:border-zinc-700">
+          <ul className="flex flex-col gap-3">
+            {participants.map((p) =>
+              isAdmin ? (
+                <ParticipantRow
+                  key={p.id}
+                  participant={p}
+                  tripId={tripId}
+                  currentUserId={currentUserId}
                 />
               ) : (
-                <div className="h-7 w-7 rounded-full bg-zinc-200 flex items-center justify-center text-xs text-zinc-500 dark:bg-zinc-700 dark:text-zinc-400">
-                  {p.name[0]?.toUpperCase()}
-                </div>
-              )}
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-zinc-800 truncate dark:text-zinc-200">
-                  {p.name}
-                  {p.type === "GHOST" && (
-                    <span className="ml-1 text-xs text-zinc-400 dark:text-zinc-500">(fantasma)</span>
+                <li key={p.id} className="flex items-center gap-3">
+                  {p.user?.image ? (
+                    <Image
+                      src={p.user.image}
+                      alt={p.name}
+                      width={28}
+                      height={28}
+                      className="rounded-full"
+                    />
+                  ) : (
+                    <div className="h-7 w-7 rounded-full bg-zinc-200 flex items-center justify-center text-xs text-zinc-500 dark:bg-zinc-700 dark:text-zinc-400">
+                      {p.name[0]?.toUpperCase()}
+                    </div>
                   )}
-                </p>
-              </div>
-              <span className="shrink-0 text-xs text-zinc-400 dark:text-zinc-500">
-                {{ ADMIN: "Admin", EDITOR: "Editor", VIEWER: "Invitado" }[p.role]}
-              </span>
-            </li>
-          ),
-        )}
-      </ul>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-zinc-800 truncate dark:text-zinc-200">
+                      {p.name}
+                      {p.type === "GHOST" && (
+                        <span className="ml-1 text-xs text-zinc-400 dark:text-zinc-500">(fantasma)</span>
+                      )}
+                    </p>
+                  </div>
+                  <span className="shrink-0 text-xs text-zinc-400 dark:text-zinc-500">
+                    {{ ADMIN: "Admin", EDITOR: "Editor", VIEWER: "Invitado" }[p.role]}
+                  </span>
+                </li>
+              ),
+            )}
+          </ul>
 
-      {isAdmin && (
-        <div className="mt-4 border-t border-zinc-100 pt-4 dark:border-zinc-700">
-          <AddParticipantSection tripId={tripId} />
+          {isAdmin && (
+            <div className="mt-4 border-t border-zinc-100 pt-4 dark:border-zinc-700">
+              <AddParticipantSection tripId={tripId} />
+            </div>
+          )}
         </div>
       )}
     </div>
