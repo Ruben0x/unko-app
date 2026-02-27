@@ -9,6 +9,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma as any),
   callbacks: {
     ...authConfig.callbacks,
+    // Override jwt to always resolve the real DB user id (cuid), not the OAuth sub.
+    // With JWT strategy + PrismaAdapter, user.id in the jwt callback may be the
+    // OAuth provider's sub (e.g. Google sub) rather than the DB-generated cuid,
+    // causing FK violations when that id is used as createdById on other models.
+    async jwt({ token, user, account }) {
+      if (account && user?.email) {
+        const dbUser = await prisma.user.findUnique({
+          where: { email: user.email },
+          select: { id: true, status: true },
+        });
+        if (dbUser) {
+          token.id = dbUser.id;
+          token.status = dbUser.status;
+        }
+      }
+      return token;
+    },
     async signIn({ user, account }) {
       if (account?.provider !== "google") return false;
       if (!user.email) return false;

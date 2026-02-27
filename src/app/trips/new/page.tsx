@@ -65,27 +65,27 @@ export default function NewTripPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50">
-      <header className="border-b border-zinc-200 bg-white">
-        <div className="mx-auto flex max-w-2xl items-center gap-4 px-6 py-4">
+    <div className="min-h-screen bg-white dark:bg-[#0E1113]">
+      <header className="border-b border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
+        <div className="mx-auto flex max-w-2xl items-center gap-4 px-4 py-4 md:px-6">
           <Link
             href="/dashboard"
-            className="text-sm text-zinc-500 hover:text-zinc-900"
+            className="text-sm text-zinc-500 hover:text-zinc-900 transition-colors dark:text-zinc-400 dark:hover:text-zinc-100"
           >
             ← Mis viajes
           </Link>
-          <h1 className="text-lg font-semibold text-zinc-900">Nuevo viaje</h1>
+          <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Nuevo viaje</h1>
         </div>
       </header>
 
-      <main className="mx-auto max-w-2xl px-6 py-8">
+      <main className="mx-auto max-w-2xl px-4 py-6 md:px-6 md:py-8">
         <form
           onSubmit={handleSubmit}
-          className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm flex flex-col gap-5"
+          className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm flex flex-col gap-5 dark:border-zinc-700 dark:bg-zinc-800 md:p-6"
         >
           {/* Name */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="name" className="text-xs font-medium text-zinc-700">
+            <label htmlFor="name" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
               Nombre del viaje <span className="text-red-500">*</span>
             </label>
             <input
@@ -94,13 +94,13 @@ export default function NewTripPage() {
               type="text"
               required
               placeholder="Ej: Japón 2025"
-              className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+              className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-zinc-500"
             />
           </div>
 
           {/* Destination */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="destination" className="text-xs font-medium text-zinc-700">
+            <label htmlFor="destination" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
               Destino
             </label>
             <input
@@ -108,46 +108,46 @@ export default function NewTripPage() {
               name="destination"
               type="text"
               placeholder="Ej: Tokyo, Osaka, Kyoto"
-              className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+              className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-zinc-500"
             />
           </div>
 
           {/* Dates */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1">
-              <label htmlFor="startDate" className="text-xs font-medium text-zinc-700">
+              <label htmlFor="startDate" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
                 Fecha de inicio
               </label>
               <input
                 id="startDate"
                 name="startDate"
                 type="date"
-                className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label htmlFor="endDate" className="text-xs font-medium text-zinc-700">
+              <label htmlFor="endDate" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
                 Fecha de término
               </label>
               <input
                 id="endDate"
                 name="endDate"
                 type="date"
-                className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
               />
             </div>
           </div>
 
           {/* Currency */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="defaultCurrency" className="text-xs font-medium text-zinc-700">
+            <label htmlFor="defaultCurrency" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
               Moneda principal
             </label>
             <select
               id="defaultCurrency"
               name="defaultCurrency"
               defaultValue="CLP"
-              className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+              className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
             >
               {CURRENCIES.map((c) => (
                 <option key={c.value} value={c.value}>
@@ -159,7 +159,7 @@ export default function NewTripPage() {
 
           {/* Description */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="description" className="text-xs font-medium text-zinc-700">
+            <label htmlFor="description" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
               Descripción
             </label>
             <textarea
@@ -167,12 +167,12 @@ export default function NewTripPage() {
               name="description"
               rows={3}
               placeholder="Notas sobre el viaje (opcional)"
-              className="resize-none rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+              className="resize-none rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-zinc-500"
             />
           </div>
 
           {error && (
-            <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+            <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950/50 dark:text-red-400">
               {error}
             </p>
           )}
@@ -180,14 +180,14 @@ export default function NewTripPage() {
           <div className="flex justify-end gap-2 pt-1">
             <Link
               href="/dashboard"
-              className="rounded-lg border border-zinc-200 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50"
+              className="rounded-lg border border-zinc-200 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-700"
             >
               Cancelar
             </Link>
             <button
               type="submit"
               disabled={loading}
-              className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
+              className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
             >
               {loading ? "Creando..." : "Crear viaje"}
             </button>
