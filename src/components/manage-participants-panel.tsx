@@ -86,17 +86,17 @@ function ParticipantRow({
             className="rounded-full shrink-0"
           />
         ) : (
-          <div className="h-7 w-7 rounded-full bg-zinc-200 flex items-center justify-center text-xs text-zinc-500 shrink-0">
+          <div className="h-7 w-7 rounded-full bg-zinc-200 flex items-center justify-center text-xs text-zinc-500 shrink-0 dark:bg-zinc-700 dark:text-zinc-400">
             {participant.name[0]?.toUpperCase()}
           </div>
         )}
 
         {/* Name */}
         <div className="flex-1 min-w-0">
-          <p className="text-sm text-zinc-800 truncate">
+          <p className="text-sm text-zinc-800 truncate dark:text-zinc-200">
             {participant.name}
             {participant.type === "GHOST" && (
-              <span className="ml-1 text-xs text-zinc-400">(fantasma)</span>
+              <span className="ml-1 text-xs text-zinc-400 dark:text-zinc-500">(fantasma)</span>
             )}
           </p>
         </div>
@@ -106,7 +106,7 @@ function ParticipantRow({
           value={participant.role}
           onChange={(e) => handleRoleChange(e.target.value)}
           disabled={loadingRole}
-          className="shrink-0 rounded border border-zinc-200 bg-white py-0.5 px-1 text-xs text-zinc-700 focus:outline-none focus:ring-1 focus:ring-zinc-400 disabled:opacity-50"
+          className="shrink-0 rounded border border-zinc-200 bg-white py-0.5 px-1 text-xs text-zinc-700 focus:outline-none focus:ring-1 focus:ring-zinc-400 disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-300"
         >
           {ROLE_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>{o.label}</option>
@@ -184,12 +184,12 @@ function AddParticipantSection({ tripId }: { tripId: string }) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-2">
       {/* Toggle */}
-      <div className="flex rounded-lg border border-zinc-200 overflow-hidden text-xs">
+      <div className="flex rounded-lg border border-zinc-200 overflow-hidden text-xs dark:border-zinc-700">
         <button
           type="button"
           onClick={() => { setMode("email"); setValue(""); setError(null); }}
           className={`flex-1 py-1.5 font-medium transition-colors ${
-            mode === "email" ? "bg-zinc-900 text-white" : "bg-white text-zinc-500 hover:bg-zinc-50"
+            mode === "email" ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900" : "bg-white text-zinc-500 hover:bg-zinc-50 dark:bg-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-700"
           }`}
         >
           Por email
@@ -198,7 +198,7 @@ function AddParticipantSection({ tripId }: { tripId: string }) {
           type="button"
           onClick={() => { setMode("ghost"); setValue(""); setError(null); }}
           className={`flex-1 py-1.5 font-medium transition-colors ${
-            mode === "ghost" ? "bg-zinc-900 text-white" : "bg-white text-zinc-500 hover:bg-zinc-50"
+            mode === "ghost" ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900" : "bg-white text-zinc-500 hover:bg-zinc-50 dark:bg-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-700"
           }`}
         >
           Fantasma
@@ -212,25 +212,25 @@ function AddParticipantSection({ tripId }: { tripId: string }) {
           onChange={(e) => setValue(e.target.value)}
           placeholder={mode === "email" ? "email@ejemplo.com" : "Nombre (ej: Juan)"}
           disabled={loading}
-          className="flex-1 min-w-0 rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+          className="flex-1 min-w-0 rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-zinc-500"
         />
         <button
           type="submit"
           disabled={loading || !value.trim()}
-          className="rounded-lg bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
+          className="rounded-lg bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
         >
           {loading ? "..." : "Agregar"}
         </button>
       </div>
 
       {mode === "ghost" && (
-        <p className="text-xs text-zinc-400">
+        <p className="text-xs text-zinc-400 dark:text-zinc-500">
           Un participante fantasma no necesita cuenta. Solo se usa para dividir gastos.
         </p>
       )}
 
-      {error && <p className="text-xs text-red-500">{error}</p>}
-      {success && <p className="text-xs text-green-600">{success}</p>}
+      {error && <p className="text-xs text-red-500 dark:text-red-400">{error}</p>}
+      {success && <p className="text-xs text-green-600 dark:text-green-400">{success}</p>}
     </form>
   );
 }
@@ -249,8 +249,8 @@ export function ManageParticipantsPanel({
   isAdmin: boolean;
 }) {
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
-      <h3 className="mb-4 text-sm font-semibold text-zinc-900">
+    <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
+      <h3 className="mb-4 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
         Participantes ({participants.length})
       </h3>
 
@@ -274,19 +274,19 @@ export function ManageParticipantsPanel({
                   className="rounded-full"
                 />
               ) : (
-                <div className="h-7 w-7 rounded-full bg-zinc-200 flex items-center justify-center text-xs text-zinc-500">
+                <div className="h-7 w-7 rounded-full bg-zinc-200 flex items-center justify-center text-xs text-zinc-500 dark:bg-zinc-700 dark:text-zinc-400">
                   {p.name[0]?.toUpperCase()}
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-zinc-800 truncate">
+                <p className="text-sm text-zinc-800 truncate dark:text-zinc-200">
                   {p.name}
                   {p.type === "GHOST" && (
-                    <span className="ml-1 text-xs text-zinc-400">(fantasma)</span>
+                    <span className="ml-1 text-xs text-zinc-400 dark:text-zinc-500">(fantasma)</span>
                   )}
                 </p>
               </div>
-              <span className="shrink-0 text-xs text-zinc-400">
+              <span className="shrink-0 text-xs text-zinc-400 dark:text-zinc-500">
                 {{ ADMIN: "Admin", EDITOR: "Editor", VIEWER: "Invitado" }[p.role]}
               </span>
             </li>
@@ -295,7 +295,7 @@ export function ManageParticipantsPanel({
       </ul>
 
       {isAdmin && (
-        <div className="mt-4 border-t border-zinc-100 pt-4">
+        <div className="mt-4 border-t border-zinc-100 pt-4 dark:border-zinc-700">
           <AddParticipantSection tripId={tripId} />
         </div>
       )}

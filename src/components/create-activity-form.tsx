@@ -84,7 +84,7 @@ export function CreateActivityForm({
       {compact ? (
         <button
           onClick={openModal}
-          className="flex items-center gap-1.5 rounded-lg border border-dashed border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-400 transition-colors hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-600"
+          className="flex items-center gap-1.5 rounded-lg border border-dashed border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-400 transition-colors hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-600 dark:border-zinc-700 dark:text-zinc-500 dark:hover:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:text-zinc-300"
         >
           <span className="text-sm font-light leading-none">+</span>
           Agregar actividad
@@ -92,7 +92,7 @@ export function CreateActivityForm({
       ) : (
         <button
           onClick={openModal}
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700"
+          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
         >
           + Nueva actividad
         </button>
@@ -105,14 +105,14 @@ export function CreateActivityForm({
             if (e.target === e.currentTarget) closeModal();
           }}
         >
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl max-h-[90vh] overflow-y-auto dark:bg-zinc-800">
             <div className="mb-5 flex items-center justify-between">
-              <h2 className="text-base font-semibold text-zinc-900">
+              <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
                 Nueva actividad
               </h2>
               <button
                 onClick={closeModal}
-                className="text-zinc-400 hover:text-zinc-600"
+                className="text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
                 aria-label="Cerrar"
               >
                 ✕
@@ -123,7 +123,7 @@ export function CreateActivityForm({
               <div className="flex flex-col gap-1">
                 <label
                   htmlFor="ca-title"
-                  className="text-xs font-medium text-zinc-700"
+                  className="text-xs font-medium text-zinc-700 dark:text-zinc-300"
                 >
                   Título <span className="text-red-500">*</span>
                 </label>
@@ -133,14 +133,14 @@ export function CreateActivityForm({
                   type="text"
                   required
                   placeholder="Ej: Visita al Templo Sensoji"
-                  className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                  className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-zinc-500"
                 />
               </div>
 
               <div className="flex flex-col gap-1">
                 <label
                   htmlFor="ca-description"
-                  className="text-xs font-medium text-zinc-700"
+                  className="text-xs font-medium text-zinc-700 dark:text-zinc-300"
                 >
                   Descripción
                 </label>
@@ -149,14 +149,14 @@ export function CreateActivityForm({
                   name="description"
                   rows={2}
                   placeholder="Descripción breve (opcional)"
-                  className="resize-none rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                  className="resize-none rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-zinc-500"
                 />
               </div>
 
               <div className="flex flex-col gap-1">
                 <label
                   htmlFor="ca-location"
-                  className="text-xs font-medium text-zinc-700"
+                  className="text-xs font-medium text-zinc-700 dark:text-zinc-300"
                 >
                   Ubicación
                 </label>
@@ -165,7 +165,7 @@ export function CreateActivityForm({
                   name="location"
                   type="text"
                   placeholder="Ej: Asakusa, Tokyo"
-                  className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                  className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-zinc-500"
                 />
               </div>
 
@@ -173,7 +173,7 @@ export function CreateActivityForm({
                 <div className="flex flex-col gap-1">
                   <label
                     htmlFor="ca-date"
-                    className="text-xs font-medium text-zinc-700"
+                    className="text-xs font-medium text-zinc-700 dark:text-zinc-300"
                   >
                     Fecha
                   </label>
@@ -182,13 +182,13 @@ export function CreateActivityForm({
                     name="activityDate"
                     type="date"
                     defaultValue={defaultDate}
-                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
                   <label
                     htmlFor="ca-time"
-                    className="text-xs font-medium text-zinc-700"
+                    className="text-xs font-medium text-zinc-700 dark:text-zinc-300"
                   >
                     Hora
                   </label>
@@ -196,7 +196,7 @@ export function CreateActivityForm({
                     id="ca-time"
                     name="activityTime"
                     type="time"
-                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
                   />
                 </div>
               </div>
@@ -204,7 +204,7 @@ export function CreateActivityForm({
               <div className="flex flex-col gap-1">
                 <label
                   htmlFor="ca-notes"
-                  className="text-xs font-medium text-zinc-700"
+                  className="text-xs font-medium text-zinc-700 dark:text-zinc-300"
                 >
                   Notas
                 </label>
@@ -213,13 +213,13 @@ export function CreateActivityForm({
                   name="notes"
                   rows={2}
                   placeholder="Notas adicionales (opcional)"
-                  className="resize-none rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                  className="resize-none rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-zinc-500"
                 />
               </div>
 
               {/* Photo upload */}
               <div className="flex flex-col gap-2">
-                <p className="text-xs font-medium text-zinc-700">Foto</p>
+                <p className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Foto</p>
                 {photoUrl ? (
                   <div className="relative">
                     <div className="relative h-36 w-full overflow-hidden rounded-xl">
@@ -248,7 +248,7 @@ export function CreateActivityForm({
               </div>
 
               {error && (
-                <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+                <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950/50 dark:text-red-400">
                   {error}
                 </p>
               )}
@@ -258,14 +258,14 @@ export function CreateActivityForm({
                   type="button"
                   onClick={closeModal}
                   disabled={loading}
-                  className="rounded-lg border border-zinc-200 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50 disabled:opacity-50"
+                  className="rounded-lg border border-zinc-200 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-700"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
+                  className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
                 >
                   {loading ? "Guardando..." : "Guardar"}
                 </button>

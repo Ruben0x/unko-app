@@ -42,7 +42,7 @@ function ItemCard({
   const canDelete = isOwner || isAdmin;
 
   return (
-    <div className="group rounded-2xl border border-zinc-100 bg-white shadow-sm ring-1 ring-black/3 hover:shadow-md hover:border-zinc-200 transition-all flex flex-col overflow-hidden">
+    <div className="group rounded-2xl border border-zinc-100 bg-white shadow-sm ring-1 ring-black/3 hover:shadow-md hover:border-zinc-200 transition-all flex flex-col overflow-hidden dark:border-zinc-700 dark:bg-zinc-800 dark:ring-white/5 dark:hover:border-zinc-700">
       {/* Cover image */}
       {item.imageUrl && (
         <div className="relative h-40 w-full">
@@ -58,7 +58,7 @@ function ItemCard({
       <div className="p-5 flex flex-col flex-1 gap-0">
         {/* Title + badges */}
         <div className="mb-3 flex items-start justify-between gap-3">
-          <h3 className="font-semibold text-zinc-900 leading-snug">
+          <h3 className="font-semibold text-zinc-900 leading-snug dark:text-zinc-100">
             {item.title}
           </h3>
           <div className="flex shrink-0 items-center gap-1.5">
@@ -82,14 +82,14 @@ function ItemCard({
 
         {/* Description */}
         {item.description && (
-          <p className="mb-3 text-sm text-zinc-500 line-clamp-2">
+          <p className="mb-3 text-sm text-zinc-500 line-clamp-2 dark:text-zinc-400">
             {item.description}
           </p>
         )}
 
         {/* Location */}
         {item.location && (
-          <p className="mb-3 text-xs text-zinc-400">📍 {item.location}</p>
+          <p className="mb-3 text-xs text-zinc-400 dark:text-zinc-500">📍 {item.location}</p>
         )}
 
         {/* External link */}
@@ -98,14 +98,14 @@ function ItemCard({
             href={item.externalUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mb-3 block text-xs text-blue-600 underline underline-offset-2 truncate"
+            className="mb-3 block text-xs text-blue-600 underline underline-offset-2 truncate dark:text-blue-400"
           >
             {item.externalUrl}
           </a>
         )}
 
         {/* Stats row */}
-        <div className="mt-auto flex items-center gap-3 border-t border-zinc-100 pt-3 text-xs text-zinc-400">
+        <div className="mt-auto flex items-center gap-3 border-t border-zinc-100 pt-3 text-xs text-zinc-400 dark:border-zinc-700 dark:text-zinc-500">
           {item.status !== "PENDING" && (
             <span>
               ✓ {item.approvals} · ✗ {item.rejections}
@@ -133,16 +133,16 @@ function ItemCard({
               className="rounded-full"
             />
           )}
-          <span className="text-xs text-zinc-400">
+          <span className="text-xs text-zinc-400 dark:text-zinc-500">
             {item.createdBy.name ?? item.createdBy.id}
           </span>
         </div>
 
         {/* Vote buttons — only for PENDING items that the user didn't create */}
         {item.status === "PENDING" && (
-          <div className="mt-3 border-t border-zinc-100 pt-3">
+          <div className="mt-3 border-t border-zinc-100 pt-3 dark:border-zinc-700">
             {isOwner ? (
-              <p className="text-center text-xs text-zinc-400">
+              <p className="text-center text-xs text-zinc-400 dark:text-zinc-500">
                 ✓ Tu voto de aprobación se registró al crear el ítem
               </p>
             ) : (
@@ -180,7 +180,7 @@ function ItemCard({
 
         {/* APPROVED actions: check-in + add to itinerary */}
         {item.status === "APPROVED" && (
-          <div className="mt-3 border-t border-zinc-100 pt-3 flex items-center justify-between gap-2">
+          <div className="mt-3 border-t border-zinc-100 pt-3 flex items-center justify-between gap-2 dark:border-zinc-700">
             <CheckInButton itemId={item.id} myCheck={item.myCheck} />
             <AddToItineraryButton tripId={tripId} itemId={item.id} title={item.title} />
           </div>
@@ -263,8 +263,8 @@ export async function ItemList({
 
   if (items.length === 0) {
     return (
-      <div className="rounded-2xl border-2 border-dashed border-zinc-200 bg-white/60 p-14 text-center">
-        <p className="text-sm text-zinc-400">No hay propuestas todavía. ¡Agrega la primera!</p>
+      <div className="rounded-2xl border-2 border-dashed border-zinc-200 bg-white/60 p-14 text-center dark:border-zinc-700 dark:bg-zinc-800/60">
+        <p className="text-sm text-zinc-400 dark:text-zinc-500">No hay propuestas todavía. ¡Agrega la primera!</p>
       </div>
     );
   }

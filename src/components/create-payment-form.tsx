@@ -80,7 +80,7 @@ export function CreatePaymentForm({
     <>
       <button
         onClick={openModal}
-        className="rounded-lg border border-zinc-200 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50 transition-colors"
+        className="rounded-lg border border-zinc-200 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50 transition-colors dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-700"
       >
         Registrar pago
       </button>
@@ -90,22 +90,22 @@ export function CreatePaymentForm({
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
           onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}
         >
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl dark:bg-zinc-800">
             <div className="mb-5 flex items-center justify-between">
-              <h2 className="text-base font-semibold text-zinc-900">Registrar pago</h2>
-              <button onClick={closeModal} className="text-zinc-400 hover:text-zinc-600" aria-label="Cerrar">✕</button>
+              <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Registrar pago</h2>
+              <button onClick={closeModal} className="text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300" aria-label="Cerrar">✕</button>
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1">
-                  <label htmlFor="fromParticipantId" className="text-xs font-medium text-zinc-700">
+                  <label htmlFor="fromParticipantId" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
                     De <span className="text-red-500">*</span>
                   </label>
                   <select
                     id="fromParticipantId" name="fromParticipantId" required
                     defaultValue={fromId ?? ""}
-                    className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                    className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
                   >
                     <option value="" disabled>-- Quién paga --</option>
                     {participants.map((p) => (
@@ -114,13 +114,13 @@ export function CreatePaymentForm({
                   </select>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label htmlFor="toParticipantId" className="text-xs font-medium text-zinc-700">
+                  <label htmlFor="toParticipantId" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
                     A <span className="text-red-500">*</span>
                   </label>
                   <select
                     id="toParticipantId" name="toParticipantId" required
                     defaultValue={toId ?? ""}
-                    className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                    className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
                   >
                     <option value="" disabled>-- Quién recibe --</option>
                     {participants.map((p) => (
@@ -132,22 +132,22 @@ export function CreatePaymentForm({
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1">
-                  <label htmlFor="payment-amount" className="text-xs font-medium text-zinc-700">
+                  <label htmlFor="payment-amount" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
                     Monto <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="payment-amount" name="amount" type="number" min="0.01" step="0.01" required
                     defaultValue={suggestedAmount}
                     placeholder="0.00"
-                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-zinc-500"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label htmlFor="payment-currency" className="text-xs font-medium text-zinc-700">Moneda</label>
+                  <label htmlFor="payment-currency" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Moneda</label>
                   <select
                     id="payment-currency" name="currency"
                     defaultValue={suggestedCurrency ?? defaultCurrency}
-                    className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                    className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
                   >
                     {CURRENCY_OPTIONS.map((c) => (
                       <option key={c.value} value={c.value}>{c.label}</option>
@@ -157,27 +157,27 @@ export function CreatePaymentForm({
               </div>
 
               <div className="flex flex-col gap-1">
-                <label htmlFor="paidAt" className="text-xs font-medium text-zinc-700">Fecha del pago</label>
+                <label htmlFor="paidAt" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Fecha del pago</label>
                 <input
                   id="paidAt" name="paidAt" type="date"
-                  className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                  className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
                 />
               </div>
 
               {error && (
-                <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
+                <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950/50 dark:text-red-400">{error}</p>
               )}
 
               <div className="flex justify-end gap-2 pt-1">
                 <button
                   type="button" onClick={closeModal} disabled={loading}
-                  className="rounded-lg border border-zinc-200 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50 disabled:opacity-50"
+                  className="rounded-lg border border-zinc-200 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-700"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit" disabled={loading}
-                  className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
+                  className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
                 >
                   {loading ? "Guardando..." : "Confirmar pago"}
                 </button>

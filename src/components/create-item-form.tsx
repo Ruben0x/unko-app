@@ -120,7 +120,7 @@ export function CreateItemForm({ tripId }: { tripId: string }) {
       {/* Trigger button */}
       <button
         onClick={openModal}
-        className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700"
+        className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
       >
         + Nuevo ítem
       </button>
@@ -133,14 +133,14 @@ export function CreateItemForm({ tripId }: { tripId: string }) {
             if (e.target === e.currentTarget) closeModal();
           }}
         >
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl max-h-[90vh] overflow-y-auto dark:bg-zinc-800">
             <div className="mb-5 flex items-center justify-between">
-              <h2 className="text-base font-semibold text-zinc-900">
+              <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
                 Nuevo ítem
               </h2>
               <button
                 onClick={closeModal}
-                className="text-zinc-400 hover:text-zinc-600"
+                className="text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
                 aria-label="Cerrar"
               >
                 ✕
@@ -152,7 +152,7 @@ export function CreateItemForm({ tripId }: { tripId: string }) {
                 <div key={field.id} className="flex flex-col gap-1">
                   <label
                     htmlFor={field.id}
-                    className="text-xs font-medium text-zinc-700"
+                    className="text-xs font-medium text-zinc-700 dark:text-zinc-300"
                   >
                     {field.label}
                     {field.required && (
@@ -165,7 +165,7 @@ export function CreateItemForm({ tripId }: { tripId: string }) {
                       id={field.id}
                       name={field.id}
                       required={field.required}
-                      className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                      className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
                     >
                       {field.options?.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -179,7 +179,7 @@ export function CreateItemForm({ tripId }: { tripId: string }) {
                       name={field.id}
                       rows={3}
                       placeholder={field.placeholder}
-                      className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 resize-none"
+                      className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 resize-none dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-zinc-500"
                     />
                   ) : (
                     <input
@@ -188,7 +188,7 @@ export function CreateItemForm({ tripId }: { tripId: string }) {
                       type={field.type ?? "text"}
                       required={field.required}
                       placeholder={field.placeholder}
-                      className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                      className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-zinc-500"
                     />
                   )}
                 </div>
@@ -196,12 +196,12 @@ export function CreateItemForm({ tripId }: { tripId: string }) {
 
               {/* Image upload — optional */}
               <div className="flex flex-col gap-2">
-                <span className="text-xs font-medium text-zinc-700">
+                <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
                   Imagen del ítem (opcional)
                 </span>
 
                 {imageUrl && (
-                  <div className="relative w-full h-36 rounded-lg overflow-hidden border border-zinc-200">
+                  <div className="relative w-full h-36 rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-700">
                     <Image
                       src={imageUrl}
                       alt="Vista previa"
@@ -226,7 +226,7 @@ export function CreateItemForm({ tripId }: { tripId: string }) {
               </div>
 
               {error && (
-                <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+                <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950/50 dark:text-red-400">
                   {error}
                 </p>
               )}
@@ -236,14 +236,14 @@ export function CreateItemForm({ tripId }: { tripId: string }) {
                   type="button"
                   onClick={closeModal}
                   disabled={loading}
-                  className="rounded-lg border border-zinc-200 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50 disabled:opacity-50"
+                  className="rounded-lg border border-zinc-200 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-700"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
+                  className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
                 >
                   {loading ? "Guardando..." : "Guardar"}
                 </button>

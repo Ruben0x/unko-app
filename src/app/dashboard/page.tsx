@@ -4,6 +4,7 @@ import { auth, signOut } from "@/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { InviteUserForm } from "@/components/invite-user-form";
+import { ThemeToggle } from "@/components/theme-toggle";
 import type { TripSummary } from "@/types/trip";
 
 const ROLE_LABELS = { ADMIN: "Admin", EDITOR: "Editor", VIEWER: "Invitado" } as const;
@@ -44,16 +45,17 @@ export default async function DashboardPage() {
   const trips = await getTripSummaries(session.user.id);
 
   return (
-    <div className="min-h-screen bg-zinc-50">
+    <div className="min-h-screen bg-white dark:bg-[#0E1113]">
       {/* Header */}
-      <header className="border-b border-zinc-200 bg-white">
+      <header className="border-b border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-800">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <h1 className="text-lg font-semibold text-zinc-900">
+          <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
             Planificador de viaje
           </h1>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-zinc-500">{session.user.email}</span>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-zinc-500 dark:text-zinc-400">{session.user.email}</span>
             <InviteUserForm />
+            <ThemeToggle />
             <form
               action={async () => {
                 "use server";
@@ -62,7 +64,7 @@ export default async function DashboardPage() {
             >
               <button
                 type="submit"
-                className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:bg-zinc-50"
+                className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-700"
               >
                 Salir
               </button>
@@ -74,22 +76,22 @@ export default async function DashboardPage() {
       {/* Content */}
       <main className="mx-auto max-w-5xl px-6 py-8">
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-zinc-900">Mis viajes</h2>
+          <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">Mis viajes</h2>
           <Link
             href="/trips/new"
-            className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700"
+            className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
             + Nuevo viaje
           </Link>
         </div>
 
         {trips.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-zinc-300 p-14 text-center">
-            <p className="text-sm text-zinc-400">
+          <div className="rounded-xl border border-dashed border-zinc-300 p-14 text-center dark:border-zinc-700">
+            <p className="text-sm text-zinc-400 dark:text-zinc-500">
               No tienes viajes todavía.{" "}
               <Link
                 href="/trips/new"
-                className="text-zinc-900 underline underline-offset-2"
+                className="text-zinc-900 underline underline-offset-2 dark:text-zinc-100"
               >
                 Crea el primero
               </Link>
@@ -121,25 +123,25 @@ function TripCard({ trip }: { trip: TripSummary }) {
   return (
     <Link
       href={`/trips/${trip.id}`}
-      className="group flex flex-col rounded-2xl border border-zinc-100 bg-white shadow-sm ring-1 ring-black/3 hover:shadow-lg hover:border-zinc-200 transition-all overflow-hidden"
+      className="group flex flex-col rounded-2xl border border-zinc-100 bg-white shadow-sm ring-1 ring-black/3 hover:shadow-lg hover:border-zinc-200 transition-all overflow-hidden dark:border-zinc-700 dark:bg-zinc-800 dark:ring-white/5 dark:hover:border-zinc-700"
     >
       {/* Top accent bar */}
-      <div className="h-1.5 w-full bg-linear-to-r from-zinc-300 via-zinc-200 to-zinc-100" />
+      <div className="h-1.5 w-full bg-linear-to-r from-zinc-300 via-zinc-200 to-zinc-100 dark:from-zinc-700 dark:via-zinc-600 dark:to-zinc-800" />
 
       <div className="flex flex-col gap-3 p-5">
         {/* Title + role badge */}
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-semibold leading-snug text-zinc-900 group-hover:text-zinc-700 transition-colors">
+          <h3 className="font-semibold leading-snug text-zinc-900 group-hover:text-zinc-700 transition-colors dark:text-zinc-100 dark:group-hover:text-zinc-300">
             {trip.name}
           </h3>
-          <span className="shrink-0 rounded-full border border-zinc-200 bg-zinc-50 px-2.5 py-0.5 text-xs font-medium text-zinc-500">
+          <span className="shrink-0 rounded-full border border-zinc-200 bg-zinc-50 px-2.5 py-0.5 text-xs font-medium text-zinc-500 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-400">
             {ROLE_LABELS[trip.myRole]}
           </span>
         </div>
 
         {/* Destination */}
         {trip.destination && (
-          <p className="flex items-center gap-1.5 text-sm text-zinc-500">
+          <p className="flex items-center gap-1.5 text-sm text-zinc-500 dark:text-zinc-400">
             <span>📍</span>
             <span>{trip.destination}</span>
           </p>
@@ -147,21 +149,21 @@ function TripCard({ trip }: { trip: TripSummary }) {
 
         {/* Dates */}
         {(start || end) && (
-          <p className="text-xs font-medium text-zinc-400">
+          <p className="text-xs font-medium text-zinc-400 dark:text-zinc-500">
             🗓 {start && end ? `${start} – ${end}` : (start ?? end)}
           </p>
         )}
 
         {/* Description */}
         {trip.description && (
-          <p className="line-clamp-2 text-sm text-zinc-500 leading-relaxed">
+          <p className="line-clamp-2 text-sm text-zinc-500 leading-relaxed dark:text-zinc-400">
             {trip.description}
           </p>
         )}
 
         {/* Footer */}
-        <div className="mt-auto flex items-center justify-between border-t border-zinc-100 pt-3">
-          <div className="flex items-center gap-3 text-xs text-zinc-400">
+        <div className="mt-auto flex items-center justify-between border-t border-zinc-100 pt-3 dark:border-zinc-700">
+          <div className="flex items-center gap-3 text-xs text-zinc-400 dark:text-zinc-500">
             <span>
               👥 {trip._count.participants}{" "}
               {trip._count.participants !== 1 ? "personas" : "persona"}
@@ -171,7 +173,7 @@ function TripCard({ trip }: { trip: TripSummary }) {
               {trip._count.items !== 1 ? "propuestas" : "propuesta"}
             </span>
           </div>
-          <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-semibold text-zinc-600">
+          <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-semibold text-zinc-600 dark:bg-zinc-700 dark:text-zinc-400">
             {CURRENCY_SYMBOLS[trip.defaultCurrency] ?? trip.defaultCurrency}
           </span>
         </div>
@@ -184,12 +186,12 @@ function TripCard({ trip }: { trip: TripSummary }) {
               alt={trip.createdBy.name ?? ""}
               width={18}
               height={18}
-              className="rounded-full ring-1 ring-zinc-200"
+              className="rounded-full ring-1 ring-zinc-200 dark:ring-zinc-700"
             />
           )}
-          <span className="text-xs text-zinc-400">
+          <span className="text-xs text-zinc-400 dark:text-zinc-500">
             Creado por{" "}
-            <span className="font-medium text-zinc-500">
+            <span className="font-medium text-zinc-500 dark:text-zinc-400">
               {trip.createdBy.name ?? "—"}
             </span>
           </span>

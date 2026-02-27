@@ -3,6 +3,7 @@ import Link from "next/link";
 import { auth, signOut } from "@/auth";
 import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { ItemList } from "@/components/item-list";
 import { CreateItemForm } from "@/components/create-item-form";
 import { ManageParticipantsPanel } from "@/components/manage-participants-panel";
@@ -98,28 +99,28 @@ export default async function TripPage({
     });
 
   return (
-    <div className="min-h-screen bg-zinc-50">
+    <div className="min-h-screen bg-white dark:bg-[#0E1113]">
       {/* Header */}
-      <header className="border-b border-zinc-200 bg-white shadow-sm">
+      <header className="border-b border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3 min-w-0">
             <Link
               href="/dashboard"
-              className="shrink-0 flex items-center gap-1 text-sm text-zinc-400 hover:text-zinc-700 transition-colors"
+              className="shrink-0 flex items-center gap-1 text-sm text-zinc-400 hover:text-zinc-700 transition-colors dark:text-zinc-500 dark:hover:text-zinc-300"
             >
               ← <span className="hidden sm:inline">Mis viajes</span>
             </Link>
-            <span className="text-zinc-200">/</span>
-            <h1 className="text-base font-semibold text-zinc-900 truncate">
+            <span className="text-zinc-200 dark:text-zinc-700">/</span>
+            <h1 className="text-base font-semibold text-zinc-900 truncate dark:text-zinc-100">
               {trip.name}
             </h1>
             {trip.destination && (
-              <span className="hidden shrink-0 rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-500 sm:inline">
+              <span className="hidden shrink-0 rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-500 sm:inline dark:bg-zinc-700 dark:text-zinc-400">
                 📍 {trip.destination}
               </span>
             )}
             {(trip.startDate || trip.endDate) && (
-              <span className="hidden shrink-0 text-xs text-zinc-400 lg:inline">
+              <span className="hidden shrink-0 text-xs text-zinc-400 lg:inline dark:text-zinc-500">
                 {trip.startDate && fmt(trip.startDate)}
                 {trip.startDate && trip.endDate && " – "}
                 {trip.endDate && fmt(trip.endDate)}
@@ -129,6 +130,7 @@ export default async function TripPage({
 
           <div className="flex shrink-0 items-center gap-2">
             {isAdmin && <EditTripForm trip={trip} />}
+            <ThemeToggle />
             <form
               action={async () => {
                 "use server";
@@ -137,7 +139,7 @@ export default async function TripPage({
             >
               <button
                 type="submit"
-                className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:bg-zinc-50"
+                className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-700"
               >
                 Salir
               </button>
@@ -154,8 +156,8 @@ export default async function TripPage({
                 href={`/trips/${tripId}?tab=${tab.id}`}
                 className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                   activeTab === tab.id
-                    ? "bg-zinc-900 text-white"
-                    : "text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100"
+                    ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
+                    : "text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-zinc-700"
                 }`}
               >
                 {tab.label}
@@ -174,7 +176,7 @@ export default async function TripPage({
             {/* Items column */}
             <div>
               <div className="mb-6 flex items-center justify-between">
-                <h2 className="text-base font-semibold text-zinc-900">
+                <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
                   Propuestas del grupo
                 </h2>
                 <CreateItemForm tripId={tripId} />
@@ -182,7 +184,7 @@ export default async function TripPage({
 
               <Suspense
                 fallback={
-                  <div className="text-sm text-zinc-400">Cargando propuestas...</div>
+                  <div className="text-sm text-zinc-400 dark:text-zinc-500">Cargando propuestas...</div>
                 }
               >
                 <ItemList
@@ -209,10 +211,10 @@ export default async function TripPage({
         {activeTab === "itinerario" && (
           <div>
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-base font-semibold text-zinc-900">Itinerario</h2>
+              <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Itinerario</h2>
               {canEdit && <CreateActivityForm tripId={tripId} />}
             </div>
-            <Suspense fallback={<div className="text-sm text-zinc-400">Cargando itinerario...</div>}>
+            <Suspense fallback={<div className="text-sm text-zinc-400 dark:text-zinc-500">Cargando itinerario...</div>}>
               <ActivityList
                 tripId={tripId}
                 canEdit={canEdit}
@@ -227,7 +229,7 @@ export default async function TripPage({
         {activeTab === "hoteles" && (
           <div>
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-base font-semibold text-zinc-900">Hoteles</h2>
+              <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Hoteles</h2>
               {canEdit && (
                 <CreateHotelForm
                   tripId={tripId}
@@ -235,7 +237,7 @@ export default async function TripPage({
                 />
               )}
             </div>
-            <Suspense fallback={<div className="text-sm text-zinc-400">Cargando hoteles...</div>}>
+            <Suspense fallback={<div className="text-sm text-zinc-400 dark:text-zinc-500">Cargando hoteles...</div>}>
               <HotelList tripId={tripId} canEdit={canEdit} />
             </Suspense>
           </div>
@@ -245,7 +247,7 @@ export default async function TripPage({
         {activeTab === "gastos" && (
           <div>
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-base font-semibold text-zinc-900">Gastos</h2>
+              <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Gastos</h2>
               {canEdit && (
                 <CreateExpenseForm
                   tripId={tripId}
@@ -254,7 +256,7 @@ export default async function TripPage({
                 />
               )}
             </div>
-            <Suspense fallback={<div className="text-sm text-zinc-400">Cargando gastos...</div>}>
+            <Suspense fallback={<div className="text-sm text-zinc-400 dark:text-zinc-500">Cargando gastos...</div>}>
               <ExpenseList
                 tripId={tripId}
                 participants={participantOptions}

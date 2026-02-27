@@ -85,7 +85,7 @@ export function EditTripForm({ trip }: { trip: TripData }) {
     <>
       <button
         onClick={openModal}
-        className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs text-zinc-600 hover:bg-zinc-50 transition-colors"
+        className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs text-zinc-600 hover:bg-zinc-50 transition-colors dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-700"
       >
         Editar viaje
       </button>
@@ -95,59 +95,59 @@ export function EditTripForm({ trip }: { trip: TripData }) {
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
           onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}
         >
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl max-h-[90vh] overflow-y-auto dark:bg-zinc-800">
             <div className="mb-5 flex items-center justify-between">
-              <h2 className="text-base font-semibold text-zinc-900">Editar viaje</h2>
-              <button onClick={closeModal} className="text-zinc-400 hover:text-zinc-600" aria-label="Cerrar">✕</button>
+              <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Editar viaje</h2>
+              <button onClick={closeModal} className="text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300" aria-label="Cerrar">✕</button>
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div className="flex flex-col gap-1">
-                <label htmlFor="edit-name" className="text-xs font-medium text-zinc-700">
+                <label htmlFor="edit-name" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
                   Nombre <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="edit-name" name="name" type="text" required
                   defaultValue={trip.name}
-                  className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                  className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
                 />
               </div>
 
               <div className="flex flex-col gap-1">
-                <label htmlFor="edit-destination" className="text-xs font-medium text-zinc-700">Destino</label>
+                <label htmlFor="edit-destination" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Destino</label>
                 <input
                   id="edit-destination" name="destination" type="text"
                   defaultValue={trip.destination ?? ""}
                   placeholder="Ej: Tokyo, Osaka"
-                  className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                  className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-zinc-500"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1">
-                  <label htmlFor="edit-startDate" className="text-xs font-medium text-zinc-700">Inicio</label>
+                  <label htmlFor="edit-startDate" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Inicio</label>
                   <input
                     id="edit-startDate" name="startDate" type="date"
                     defaultValue={toDateInput(trip.startDate)}
-                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label htmlFor="edit-endDate" className="text-xs font-medium text-zinc-700">Término</label>
+                  <label htmlFor="edit-endDate" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Término</label>
                   <input
                     id="edit-endDate" name="endDate" type="date"
                     defaultValue={toDateInput(trip.endDate)}
-                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
                   />
                 </div>
               </div>
 
               <div className="flex flex-col gap-1">
-                <label htmlFor="edit-currency" className="text-xs font-medium text-zinc-700">Moneda principal</label>
+                <label htmlFor="edit-currency" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Moneda principal</label>
                 <select
                   id="edit-currency" name="defaultCurrency"
                   defaultValue={trip.defaultCurrency}
-                  className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                  className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
                 >
                   {CURRENCY_OPTIONS.map((c) => (
                     <option key={c.value} value={c.value}>{c.label}</option>
@@ -156,29 +156,29 @@ export function EditTripForm({ trip }: { trip: TripData }) {
               </div>
 
               <div className="flex flex-col gap-1">
-                <label htmlFor="edit-description" className="text-xs font-medium text-zinc-700">Descripción</label>
+                <label htmlFor="edit-description" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Descripción</label>
                 <textarea
                   id="edit-description" name="description" rows={3}
                   defaultValue={trip.description ?? ""}
                   placeholder="Notas sobre el viaje (opcional)"
-                  className="resize-none rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                  className="resize-none rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-zinc-500"
                 />
               </div>
 
               {error && (
-                <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
+                <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950/50 dark:text-red-400">{error}</p>
               )}
 
               <div className="flex justify-end gap-2 pt-1">
                 <button
                   type="button" onClick={closeModal} disabled={loading}
-                  className="rounded-lg border border-zinc-200 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50 disabled:opacity-50"
+                  className="rounded-lg border border-zinc-200 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-700"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit" disabled={loading}
-                  className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
+                  className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
                 >
                   {loading ? "Guardando..." : "Guardar cambios"}
                 </button>

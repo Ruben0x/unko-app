@@ -90,8 +90,8 @@ export async function ActivityList({
 
   if (!hasAnything) {
     return (
-      <div className="rounded-2xl border-2 border-dashed border-zinc-200 bg-white/60 p-14 text-center">
-        <p className="text-sm text-zinc-400">
+      <div className="rounded-2xl border-2 border-dashed border-zinc-200 bg-white/60 p-14 text-center dark:border-zinc-700 dark:bg-zinc-800/60">
+        <p className="text-sm text-zinc-400 dark:text-zinc-500">
           No hay actividades todavía. ¡Agrega la primera!
         </p>
       </div>
@@ -121,18 +121,18 @@ export async function ActivityList({
       ))}
 
       {noDateActivities.length > 0 && (
-        <div className="rounded-2xl border border-zinc-100 bg-white shadow-sm ring-1 ring-black/3 overflow-hidden">
+        <div className="rounded-2xl border border-zinc-100 bg-white shadow-sm ring-1 ring-black/3 overflow-hidden dark:border-zinc-700 dark:bg-zinc-800 dark:ring-white/5">
           {/* Header */}
-          <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-zinc-100">
+          <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-zinc-100 dark:border-zinc-700">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl bg-zinc-100">
-                <span className="text-xs font-bold text-zinc-400">—</span>
+              <div className="flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-700">
+                <span className="text-xs font-bold text-zinc-400 dark:text-zinc-500">—</span>
               </div>
-              <p className="text-sm font-semibold text-zinc-700">Sin fecha</p>
+              <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Sin fecha</p>
             </div>
           </div>
           {/* Activities */}
-          <div className="divide-y divide-zinc-100">
+          <div className="divide-y divide-zinc-100 dark:divide-zinc-700">
             {noDateActivities.map((act) => (
               <ActivityRow
                 key={act.id}
@@ -178,22 +178,22 @@ function DayCard({
   const isEmpty = acts.length === 0;
 
   return (
-    <div className="rounded-2xl border border-zinc-100 bg-white shadow-sm ring-1 ring-black/3 overflow-hidden">
+    <div className="rounded-2xl border border-zinc-100 bg-white shadow-sm ring-1 ring-black/3 overflow-hidden dark:border-zinc-700 dark:bg-zinc-800 dark:ring-white/5">
       {/* Card header */}
-      <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-zinc-100">
+      <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-zinc-100 dark:border-zinc-700">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl bg-zinc-900 text-white">
+          <div className="flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900">
             <span className="text-[9px] font-semibold leading-none tracking-widest opacity-60">
               {weekday}
             </span>
             <span className="text-base font-bold leading-tight">{dayNum}</span>
           </div>
           <div>
-            <p className="text-sm font-semibold text-zinc-800 capitalize">
+            <p className="text-sm font-semibold text-zinc-800 capitalize dark:text-zinc-200">
               {monthYear}
             </p>
             {!isEmpty && (
-              <p className="text-xs font-medium text-zinc-500">
+              <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
                 {acts.length} actividad{acts.length !== 1 ? "es" : ""}
               </p>
             )}
@@ -208,10 +208,10 @@ function DayCard({
       {/* Body */}
       {isEmpty ? (
         <div className="flex items-center justify-center px-5 py-10">
-          <p className="text-sm font-medium text-zinc-400">☀️ Día libre</p>
+          <p className="text-sm font-medium text-zinc-400 dark:text-zinc-500">☀️ Día libre</p>
         </div>
       ) : (
-        <div className="divide-y divide-zinc-100">
+        <div className="divide-y divide-zinc-100 dark:divide-zinc-700">
           {acts.map((act) => (
             <ActivityRow
               key={act.id}
@@ -253,8 +253,8 @@ function ActivityRow({
       {/* Time badge */}
       <div className="w-14 shrink-0 pt-0.5">
         {act.activityTime && (
-          <div className="rounded-lg bg-zinc-900 px-2 py-1.5 text-center">
-            <span className="text-xs font-semibold tabular-nums text-white">
+          <div className="rounded-lg bg-zinc-900 px-2 py-1.5 text-center dark:bg-zinc-100">
+            <span className="text-xs font-semibold tabular-nums text-white dark:text-zinc-900">
               {act.activityTime}
             </span>
           </div>
@@ -263,28 +263,28 @@ function ActivityRow({
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <p className="font-semibold text-zinc-900 text-sm leading-snug">
+        <p className="font-semibold text-zinc-900 text-sm leading-snug dark:text-zinc-100">
           {act.title}
         </p>
         {act.item && (
-          <span className="mt-0.5 inline-block rounded-full bg-violet-50 border border-violet-100 px-2 py-0.5 text-xs font-medium text-violet-600">
+          <span className="mt-0.5 inline-block rounded-full bg-violet-50 border border-violet-100 px-2 py-0.5 text-xs font-medium text-violet-600 dark:bg-violet-950 dark:border-violet-900 dark:text-violet-400">
             {act.item.title}
           </span>
         )}
         {act.description && (
-          <p className="mt-1.5 text-sm text-zinc-600 leading-relaxed">
+          <p className="mt-1.5 text-sm text-zinc-600 leading-relaxed dark:text-zinc-400">
             {act.description}
           </p>
         )}
         <div className="mt-2 flex flex-wrap items-center gap-3">
           {act.location && (
-            <span className="flex items-center gap-1 text-xs font-medium text-zinc-500">
+            <span className="flex items-center gap-1 text-xs font-medium text-zinc-500 dark:text-zinc-400">
               <span>📍</span>
               {act.location}
             </span>
           )}
           {act.notes && (
-            <span className="text-xs text-zinc-500 italic">{act.notes}</span>
+            <span className="text-xs text-zinc-500 italic dark:text-zinc-400">{act.notes}</span>
           )}
         </div>
       </div>

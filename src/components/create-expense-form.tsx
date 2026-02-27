@@ -90,7 +90,7 @@ export function CreateExpenseForm({
     <>
       <button
         onClick={openModal}
-        className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700"
+        className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
       >
         + Nuevo gasto
       </button>
@@ -100,40 +100,40 @@ export function CreateExpenseForm({
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
           onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}
         >
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl max-h-[90vh] overflow-y-auto dark:bg-zinc-800">
             <div className="mb-5 flex items-center justify-between">
-              <h2 className="text-base font-semibold text-zinc-900">Nuevo gasto</h2>
-              <button onClick={closeModal} className="text-zinc-400 hover:text-zinc-600" aria-label="Cerrar">✕</button>
+              <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Nuevo gasto</h2>
+              <button onClick={closeModal} className="text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300" aria-label="Cerrar">✕</button>
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div className="flex flex-col gap-1">
-                <label htmlFor="expense-desc" className="text-xs font-medium text-zinc-700">
+                <label htmlFor="expense-desc" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
                   Descripción <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="expense-desc" name="description" type="text" required
                   placeholder="Ej: Cena en Shibuya"
-                  className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                  className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-zinc-500"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1">
-                  <label htmlFor="expense-amount" className="text-xs font-medium text-zinc-700">
+                  <label htmlFor="expense-amount" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
                     Monto <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="expense-amount" name="amount" type="number" min="0.01" step="0.01" required
                     placeholder="0.00"
-                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-zinc-500"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label htmlFor="expense-currency" className="text-xs font-medium text-zinc-700">Moneda</label>
+                  <label htmlFor="expense-currency" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Moneda</label>
                   <select
                     id="expense-currency" name="currency" defaultValue={defaultCurrency}
-                    className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                    className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
                   >
                     {CURRENCY_OPTIONS.map((c) => (
                       <option key={c.value} value={c.value}>{c.label}</option>
@@ -144,10 +144,10 @@ export function CreateExpenseForm({
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1">
-                  <label htmlFor="paidBy" className="text-xs font-medium text-zinc-700">Pagado por</label>
+                  <label htmlFor="paidBy" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Pagado por</label>
                   <select
                     id="paidBy" name="paidBy"
-                    className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                    className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
                   >
                     <option value="">-- Seleccionar --</option>
                     {participants.map((p) => (
@@ -156,18 +156,18 @@ export function CreateExpenseForm({
                   </select>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label htmlFor="expense-date" className="text-xs font-medium text-zinc-700">Fecha</label>
+                  <label htmlFor="expense-date" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Fecha</label>
                   <input
                     id="expense-date" name="expenseDate" type="date"
-                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
                   />
                 </div>
               </div>
 
               {/* Participants to split among */}
               <div className="flex flex-col gap-2">
-                <span className="text-xs font-medium text-zinc-700">
-                  Dividir entre <span className="text-zinc-400">(división equitativa)</span>
+                <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                  Dividir entre <span className="text-zinc-400 dark:text-zinc-500">(división equitativa)</span>
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {participants.map((p) => (
@@ -177,8 +177,8 @@ export function CreateExpenseForm({
                       onClick={() => toggleParticipant(p.id)}
                       className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                         selectedParticipants.includes(p.id)
-                          ? "bg-zinc-900 text-white"
-                          : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
+                          ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
+                          : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200 dark:bg-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-700"
                       }`}
                     >
                       {p.name}
@@ -188,19 +188,19 @@ export function CreateExpenseForm({
               </div>
 
               {error && (
-                <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
+                <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950/50 dark:text-red-400">{error}</p>
               )}
 
               <div className="flex justify-end gap-2 pt-1">
                 <button
                   type="button" onClick={closeModal} disabled={loading}
-                  className="rounded-lg border border-zinc-200 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50 disabled:opacity-50"
+                  className="rounded-lg border border-zinc-200 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-700"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit" disabled={loading}
-                  className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
+                  className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
                 >
                   {loading ? "Guardando..." : "Guardar"}
                 </button>
