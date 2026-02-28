@@ -151,7 +151,7 @@ function AddParticipantSection({ tripId }: { tripId: string }) {
 
     const body =
       mode === "email"
-        ? { type: "REGISTERED", email: value.trim() }
+        ? { type: "REGISTERED", email: value.trim().toLowerCase() }
         : { type: "GHOST", name: value.trim() };
 
     try {

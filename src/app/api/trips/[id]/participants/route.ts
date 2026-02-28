@@ -12,7 +12,7 @@ async function requireActiveSession() {
 
 const addRegisteredSchema = z.object({
   type: z.literal("REGISTERED").optional().default("REGISTERED"),
-  email: z.string().email("Email inválido"),
+  email: z.string().trim().toLowerCase().email("Email inválido"),
   role: z.enum(["EDITOR", "VIEWER"]).optional().default("VIEWER"),
 });
 

@@ -21,7 +21,7 @@ export function AddParticipantForm({ tripId }: { tripId: string }) {
       const res = await fetch(`/api/trips/${tripId}/participants`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify({ email: email.trim().toLowerCase() }),
       });
 
       const data = (await res.json()) as { name?: string; error?: string };

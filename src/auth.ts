@@ -16,7 +16,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user, account }) {
       if (account && user?.email) {
         const dbUser = await prisma.user.findUnique({
-          where: { email: user.email },
+          where: { email: user.email.toLowerCase() },
           select: { id: true, status: true },
         });
         if (dbUser) {
@@ -31,7 +31,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (!user.email) return false;
 
       const existingUser = await prisma.user.findUnique({
-        where: { email: user.email },
+        where: { email: user.email.toLowerCase() },
         select: { status: true },
       });
 
@@ -46,7 +46,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         try {
           await prisma.user.create({
             data: {
-              email: user.email,
+              email: user.email.toLowerCase(),
               name: user.name ?? null,
               image: user.image ?? null,
               status: "ACTIVE",
@@ -62,7 +62,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       // ── Invitation gate ───────────────────────────────────────────────────────
       const invitation = await prisma.invitation.findFirst({
         where: {
-          email: user.email,
+          email: user.email.toLowerCase(),
           status: "PENDING",
           expiresAt: { gt: new Date() },
         },
@@ -73,9 +73,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       // Accept the invitation and activate the user atomically
       await prisma.$transaction(async (tx) => {
         const activatedUser = await tx.user.upsert({
-          where: { email: user.email! },
+          where: { email: user.email!.toLowerCase() },
           create: {
-            email: user.email!,
+            email: user.email!.toLowerCase(),
             name: user.name ?? null,
             image: user.image ?? null,
             status: "ACTIVE",
