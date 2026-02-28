@@ -25,3 +25,53 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ─── Google Maps Places Autocomplete dropdown ──────────────────────────────── */
+/* The SDK injects .pac-container at the end of <body>, outside the React tree  */
+
+.pac-container {
+  z-index: 9999 !important;
+  font-family: inherit;
+  border-radius: 0.5rem;
+  border: 1px solid #e4e4e7; /* zinc-200 */
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  margin-top: 4px;
+}
+.pac-item {
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border-top: 1px solid #f4f4f5; /* zinc-100 */
+  color: #18181b; /* zinc-900 */
+}
+.pac-item:hover,
+.pac-item-selected {
+  background-color: #f4f4f5;
+}
+.pac-item-query {
+  font-size: 0.875rem;
+  color: #18181b;
+}
+.pac-matched {
+  font-weight: 600;
+}
+
+/* Dark mode overrides (hex exactos del zinc palette) */
+.dark .pac-container {
+  background-color: #27272a; /* zinc-800 */
+  border-color: #3f3f46;     /* zinc-700 */
+}
+.dark .pac-item {
+  border-top-color: #3f3f46;
+  color: #f4f4f5;            /* zinc-100 */
+}
+.dark .pac-item:hover,
+.dark .pac-item-selected {
+  background-color: #3f3f46;
+}
+.dark .pac-item-query {
+  color: #f4f4f5;
+}
+.dark .pac-matched {
+  color: #ffffff;
+}

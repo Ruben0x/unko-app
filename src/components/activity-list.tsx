@@ -3,6 +3,7 @@ import { DeleteActivityButton } from "@/components/delete-activity-button";
 import { CreateActivityForm } from "@/components/create-activity-form";
 import { EditActivityForm } from "@/components/edit-activity-form";
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
+import { getMapsUrl } from "@/lib/maps-url";
 
 function toDateStr(d: Date): string {
   return d.toISOString().slice(0, 10);
@@ -55,6 +56,7 @@ export async function ActivityList({
       title: true,
       description: true,
       location: true,
+      locationPlaceId: true,
       activityDate: true,
       activityTime: true,
       notes: true,
@@ -155,6 +157,7 @@ type Activity = {
   title: string;
   description: string | null;
   location: string | null;
+  locationPlaceId: string | null;
   activityDate: Date | null;
   activityTime: string | null;
   notes: string | null;
@@ -242,6 +245,7 @@ function ActivityRow({
     title: act.title,
     description: act.description,
     location: act.location,
+    locationPlaceId: act.locationPlaceId,
     activityDate: act.activityDate ? toDateStr(new Date(act.activityDate)) : null,
     activityTime: act.activityTime,
     notes: act.notes,
@@ -278,10 +282,15 @@ function ActivityRow({
         )}
         <div className="mt-2 flex flex-wrap items-center gap-3">
           {act.location && (
-            <span className="flex items-center gap-1 text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            <a
+              href={getMapsUrl(act.location, act.locationPlaceId)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-zinc-700 hover:underline dark:text-zinc-400 dark:hover:text-zinc-200"
+            >
               <span>📍</span>
               {act.location}
-            </span>
+            </a>
           )}
           {act.notes && (
             <span className="text-xs text-zinc-500 italic dark:text-zinc-400">{act.notes}</span>

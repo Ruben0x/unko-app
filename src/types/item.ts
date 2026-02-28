@@ -11,6 +11,7 @@ export type ItemSummary = {
   status: "PENDING" | "APPROVED" | "REJECTED";
   description: string | null;
   location: string | null;
+  locationPlaceId: string | null;
   externalUrl: string | null;
   imageUrl: string | null;
   tripId: string;

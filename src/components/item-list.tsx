@@ -5,6 +5,7 @@ import { VoteButtons } from "@/components/vote-buttons";
 import { AddToItineraryButton } from "@/components/add-to-itinerary-button";
 import { DeleteItemButton } from "@/components/delete-item-button";
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
+import { getMapsUrl } from "@/lib/maps-url";
 import type { ItemSummary } from "@/types/item";
 
 // ─── Labels / colors ───────────────────────────────────────────────────────────
@@ -94,7 +95,14 @@ function ItemCard({
 
         {/* Location */}
         {item.location && (
-          <p className="mb-3 text-xs text-zinc-400 dark:text-zinc-500">📍 {item.location}</p>
+          <a
+            href={getMapsUrl(item.location, item.locationPlaceId)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mb-3 flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-600 hover:underline dark:text-zinc-500 dark:hover:text-zinc-300"
+          >
+            📍 {item.location}
+          </a>
         )}
 
         {/* External link */}
@@ -223,6 +231,7 @@ export async function ItemList({
         status: true,
         description: true,
         location: true,
+        locationPlaceId: true,
         externalUrl: true,
         imageUrl: true,
         tripId: true,

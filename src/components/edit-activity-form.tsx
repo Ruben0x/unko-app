@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { UploadPhoto } from "@/components/upload-photo";
 import { DatePicker } from "@/components/date-picker";
+import { LocationInput } from "@/components/location-input";
 import { toast } from "sonner";
 
 type ActivityData = {
@@ -12,6 +13,7 @@ type ActivityData = {
   title: string;
   description: string | null;
   location: string | null;
+  locationPlaceId: string | null;
   activityDate: string | null; // "YYYY-MM-DD" or null
   activityTime: string | null;
   notes: string | null;
@@ -49,6 +51,7 @@ export function EditActivityForm({
       title: (fd.get("title") as string).trim(),
       description: (fd.get("description") as string).trim() || null,
       location: (fd.get("location") as string).trim() || null,
+      locationPlaceId: (fd.get("locationPlaceId") as string).trim() || null,
       activityDate: (fd.get("activityDate") as string) || null,
       activityTime: (fd.get("activityTime") as string) || null,
       notes: (fd.get("notes") as string).trim() || null,
@@ -157,13 +160,13 @@ export function EditActivityForm({
                 >
                   Ubicación
                 </label>
-                <input
+                <LocationInput
                   id="ea-location"
                   name="location"
-                  type="text"
+                  namePlaceId="locationPlaceId"
                   defaultValue={activity.location ?? ""}
+                  defaultPlaceId={activity.locationPlaceId ?? ""}
                   placeholder="Ej: Asakusa, Tokyo"
-                  className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-zinc-500"
                 />
               </div>
 

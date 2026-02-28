@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { UploadPhoto } from "@/components/upload-photo";
 import { DatePicker } from "@/components/date-picker";
+import { LocationInput } from "@/components/location-input";
 import { toast } from "sonner";
 
 export function CreateActivityForm({
@@ -43,12 +44,14 @@ export function CreateActivityForm({
 
     const description = (fd.get("description") as string).trim();
     const location = (fd.get("location") as string).trim();
+    const locationPlaceId = (fd.get("locationPlaceId") as string).trim();
     const activityDate = fd.get("activityDate") as string;
     const activityTime = fd.get("activityTime") as string;
     const notes = (fd.get("notes") as string).trim();
 
     if (description) body.description = description;
     if (location) body.location = location;
+    if (locationPlaceId) body.locationPlaceId = locationPlaceId;
     if (activityDate) body.activityDate = activityDate;
     if (activityTime) body.activityTime = activityTime;
     if (notes) body.notes = notes;
@@ -159,12 +162,11 @@ export function CreateActivityForm({
                 >
                   Ubicación
                 </label>
-                <input
+                <LocationInput
                   id="ca-location"
                   name="location"
-                  type="text"
+                  namePlaceId="locationPlaceId"
                   placeholder="Ej: Asakusa, Tokyo"
-                  className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-zinc-500"
                 />
               </div>
 

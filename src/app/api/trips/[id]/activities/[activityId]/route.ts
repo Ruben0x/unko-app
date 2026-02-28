@@ -38,6 +38,7 @@ export async function PATCH(
     title?: string;
     description?: string;
     location?: string;
+    locationPlaceId?: string | null;
     activityDate?: string;
     activityTime?: string;
     notes?: string;
@@ -57,6 +58,9 @@ export async function PATCH(
       }),
       ...(body.location !== undefined && {
         location: body.location?.trim() || null,
+      }),
+      ...(body.locationPlaceId !== undefined && {
+        locationPlaceId: body.locationPlaceId || null,
       }),
       ...(body.activityDate !== undefined && {
         activityDate: body.activityDate ? new Date(body.activityDate) : null,

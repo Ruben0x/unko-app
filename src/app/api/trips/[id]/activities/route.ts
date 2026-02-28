@@ -14,6 +14,7 @@ const createActivitySchema = z.object({
   title: z.string().trim().min(1).max(200),
   description: z.string().trim().max(1000).optional(),
   location: z.string().trim().max(500).optional(),
+  locationPlaceId: z.string().trim().max(300).optional(),
   activityDate: z.string().optional().or(z.literal("")),
   activityTime: z.string().optional().or(z.literal("")),
   notes: z.string().trim().max(1000).optional(),
@@ -75,20 +76,20 @@ export async function POST(
     return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
   }
 
-  let { title, description, location, activityDate, activityTime, notes, photoUrl, itemId } = result.data;
+  let { title, description, location, locationPlaceId, activityDate, activityTime, notes, photoUrl, itemId } = result.data;
 
   // If created from an Item, inherit its data as defaults
   if (itemId) {
     const item = await prisma.item.findFirst({
       where: { id: itemId, tripId, status: "APPROVED" },
-      select: { title: true, description: true, location: true, imageUrl: true },
+      select: { title: true, description: true, location: true, locationPlaceId: true, imageUrl: true },
     });
     if (!item) {
       return NextResponse.json({ error: "Item no encontrado o no aprobado" }, { status: 404 });
     }
     if (!title || title === item.title) title = item.title;
     if (!description) description = item.description ?? undefined;
-    if (!location) location = item.location ?? undefined;
+    if (!location) { location = item.location ?? undefined; locationPlaceId = item.locationPlaceId ?? undefined; }
     if (!photoUrl) photoUrl = item.imageUrl ?? undefined;
   }
 
@@ -98,6 +99,7 @@ export async function POST(
       title,
       description: description ?? null,
       location: location ?? null,
+      locationPlaceId: locationPlaceId || null,
       activityDate: activityDate ? new Date(activityDate) : null,
       activityTime: activityTime || null,
       notes: notes ?? null,
@@ -105,7 +107,7 @@ export async function POST(
       itemId: itemId ?? null,
     },
     select: {
-      id: true, title: true, description: true, location: true,
+      id: true, title: true, description: true, location: true, locationPlaceId: true,
       activityDate: true, activityTime: true, notes: true, photoUrl: true, createdAt: true,
       item: { select: { id: true, title: true } },
     },

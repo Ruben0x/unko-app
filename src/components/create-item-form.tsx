@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { UploadPhoto } from "@/components/upload-photo";
+import { LocationInput } from "@/components/location-input";
 import { toast } from "sonner";
 
 type Field = {
@@ -14,6 +15,7 @@ type Field = {
   required?: boolean;
   as?: "textarea" | "select";
   options?: { value: string; label: string }[];
+  special?: "location";
 };
 
 const FIELDS: Field[] = [
@@ -43,6 +45,7 @@ const FIELDS: Field[] = [
     id: "location",
     label: "Ubicación",
     placeholder: "Ej: Cartagena, Colombia (opcional)",
+    special: "location",
   },
   {
     id: "externalUrl",
@@ -82,10 +85,12 @@ export function CreateItemForm({ tripId }: { tripId: string }) {
 
     const description = (fd.get("description") as string).trim();
     const location = (fd.get("location") as string).trim();
+    const locationPlaceId = (fd.get("locationPlaceId") as string).trim();
     const externalUrl = (fd.get("externalUrl") as string).trim();
 
     if (description) body.description = description;
     if (location) body.location = location;
+    if (locationPlaceId) body.locationPlaceId = locationPlaceId;
     if (externalUrl) body.externalUrl = externalUrl;
     if (imageUrl) body.imageUrl = imageUrl;
 
@@ -158,7 +163,14 @@ export function CreateItemForm({ tripId }: { tripId: string }) {
                     )}
                   </label>
 
-                  {field.as === "select" ? (
+                  {field.special === "location" ? (
+                    <LocationInput
+                      id={field.id}
+                      name="location"
+                      namePlaceId="locationPlaceId"
+                      placeholder={field.placeholder}
+                    />
+                  ) : field.as === "select" ? (
                     <select
                       id={field.id}
                       name={field.id}
