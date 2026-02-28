@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { UploadPhoto } from "@/components/upload-photo";
+import { toast } from "sonner";
 
 type Field = {
   id: string;
@@ -55,25 +56,21 @@ export function CreateItemForm({ tripId }: { tripId: string }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   function openModal() {
-    setError(null);
     setImageUrl(null);
     setOpen(true);
   }
 
   function closeModal() {
     setOpen(false);
-    setError(null);
     setImageUrl(null);
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
-    setError(null);
 
     const fd = new FormData(e.currentTarget);
 
@@ -102,14 +99,15 @@ export function CreateItemForm({ tripId }: { tripId: string }) {
       const data = (await res.json()) as { error?: string };
 
       if (!res.ok) {
-        setError(data.error ?? "Error al crear el ítem");
+        toast.error(data.error ?? "Error al crear el ítem");
         return;
       }
 
       closeModal();
       router.refresh();
+      toast.success("Ítem creado");
     } catch {
-      setError("Error de red. Intenta de nuevo.");
+      toast.error("Error de red. Intenta de nuevo.");
     } finally {
       setLoading(false);
     }
@@ -224,12 +222,6 @@ export function CreateItemForm({ tripId }: { tripId: string }) {
                   disabled={loading}
                 />
               </div>
-
-              {error && (
-                <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950/50 dark:text-red-400">
-                  {error}
-                </p>
-              )}
 
               <div className="flex justify-end gap-2 pt-1">
                 <button

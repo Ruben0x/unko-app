@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { UploadPhoto } from "@/components/upload-photo";
 import type { CheckSummary } from "@/types/item";
 
@@ -16,13 +17,11 @@ export function CheckInButton({ itemId, myCheck }: CheckInButtonProps) {
   const [open, setOpen] = useState(false);
   const [pendingUrl, setPendingUrl] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const alreadyChecked = myCheck !== null;
 
   async function submit(photoUrl?: string) {
     setSaving(true);
-    setError(null);
 
     try {
       const res = await fetch(`/api/items/${itemId}/check`, {
@@ -34,15 +33,16 @@ export function CheckInButton({ itemId, myCheck }: CheckInButtonProps) {
       const data = (await res.json()) as { error?: string };
 
       if (!res.ok) {
-        setError(data.error ?? "Error al registrar la visita");
+        toast.error(data.error ?? "Error al registrar la visita");
         return;
       }
 
       setOpen(false);
       setPendingUrl(null);
       router.refresh();
+      toast.success(alreadyChecked ? "Foto actualizada" : "Visita registrada");
     } catch {
-      setError("Error de red. Intenta de nuevo.");
+      toast.error("Error de red. Intenta de nuevo.");
     } finally {
       setSaving(false);
     }
@@ -54,7 +54,6 @@ export function CheckInButton({ itemId, myCheck }: CheckInButtonProps) {
       <button
         onClick={() => {
           setOpen((v) => !v);
-          setError(null);
           setPendingUrl(null);
         }}
         className="text-xs font-medium text-green-700 underline underline-offset-2 hover:text-green-900 text-left dark:text-green-400 dark:hover:text-green-300"
@@ -65,7 +64,6 @@ export function CheckInButton({ itemId, myCheck }: CheckInButtonProps) {
       {/* Inline panel */}
       {open && (
         <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 flex flex-col gap-3 dark:border-zinc-700 dark:bg-zinc-800">
-          {/* Preview of newly uploaded photo */}
           {pendingUrl && (
             <Image
               src={pendingUrl}
@@ -82,10 +80,6 @@ export function CheckInButton({ itemId, myCheck }: CheckInButtonProps) {
             disabled={saving}
           />
 
-          {error && (
-            <p className="text-xs text-red-500 dark:text-red-400">{error}</p>
-          )}
-
           <div className="flex gap-2">
             <button
               onClick={() => submit(pendingUrl ?? undefined)}
@@ -98,7 +92,6 @@ export function CheckInButton({ itemId, myCheck }: CheckInButtonProps) {
               onClick={() => {
                 setOpen(false);
                 setPendingUrl(null);
-                setError(null);
               }}
               disabled={saving}
               className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs text-zinc-600 hover:bg-white disabled:opacity-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"

@@ -2,22 +2,36 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export function DeleteItemButton({ itemId }: { itemId: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  async function handleDelete() {
-    if (!confirm("¿Eliminar esta propuesta? Esta acción no se puede deshacer.")) return;
+  async function doDelete() {
     setLoading(true);
     try {
       const res = await fetch(`/api/items/${itemId}`, { method: "DELETE" });
       if (res.ok || res.status === 204) {
         router.refresh();
+        toast.success("Propuesta eliminada");
+      } else {
+        const data = (await res.json()) as { error?: string };
+        toast.error(data.error ?? "Error al eliminar la propuesta");
       }
+    } catch {
+      toast.error("Error de red. Intenta de nuevo.");
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleDelete() {
+    toast("¿Eliminar esta propuesta?", {
+      position: "top-center",
+      action: { label: "Eliminar", onClick: doDelete },
+      cancel: { label: "Cancelar", onClick: () => {} },
+    });
   }
 
   return (

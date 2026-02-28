@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 type Participant = {
   id: string;
@@ -30,13 +31,11 @@ function ParticipantRow({
   const router = useRouter();
   const [loadingRole, setLoadingRole] = useState(false);
   const [loadingRemove, setLoadingRemove] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const isSelf = participant.user?.id === currentUserId;
 
   async function handleRoleChange(newRole: string) {
     setLoadingRole(true);
-    setError(null);
     try {
       const res = await fetch(`/api/trips/${tripId}/participants/${participant.id}`, {
         method: "PATCH",
@@ -45,7 +44,7 @@ function ParticipantRow({
       });
       const data = (await res.json()) as { error?: string };
       if (!res.ok) {
-        setError(data.error ?? "Error al cambiar rol");
+        toast.error(data.error ?? "Error al cambiar rol");
         return;
       }
       router.refresh();
@@ -54,23 +53,30 @@ function ParticipantRow({
     }
   }
 
-  async function handleRemove() {
-    if (!confirm(`¿Eliminar a ${participant.name} del viaje?`)) return;
+  async function doRemove() {
     setLoadingRemove(true);
-    setError(null);
     try {
       const res = await fetch(`/api/trips/${tripId}/participants/${participant.id}`, {
         method: "DELETE",
       });
       if (!res.ok) {
         const data = (await res.json()) as { error?: string };
-        setError(data.error ?? "Error al eliminar participante");
+        toast.error(data.error ?? "Error al eliminar participante");
         return;
       }
       router.refresh();
+      toast.success(`${participant.name} eliminado del viaje`);
     } finally {
       setLoadingRemove(false);
     }
+  }
+
+  function handleRemove() {
+    toast(`¿Eliminar a ${participant.name} del viaje?`, {
+      position: "top-center",
+      action: { label: "Eliminar", onClick: doRemove },
+      cancel: { label: "Cancelar", onClick: () => {} },
+    });
   }
 
   return (
@@ -126,7 +132,6 @@ function ParticipantRow({
         )}
       </div>
 
-      {error && <p className="text-xs text-red-500 pl-9">{error}</p>}
     </li>
   );
 }
@@ -138,15 +143,11 @@ function AddParticipantSection({ tripId }: { tripId: string }) {
   const [mode, setMode] = useState<"email" | "ghost">("email");
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!value.trim()) return;
     setLoading(true);
-    setError(null);
-    setSuccess(null);
 
     const body =
       mode === "email"
@@ -163,11 +164,11 @@ function AddParticipantSection({ tripId }: { tripId: string }) {
       const data = (await res.json()) as { name?: string; error?: string };
 
       if (!res.ok) {
-        setError(data.error ?? "Error al agregar participante");
+        toast.error(data.error ?? "Error al agregar participante");
         return;
       }
 
-      setSuccess(
+      toast.success(
         mode === "ghost"
           ? `${data.name ?? value} agregado como participante fantasma`
           : `${data.name ?? value} fue agregado al viaje`,
@@ -175,7 +176,7 @@ function AddParticipantSection({ tripId }: { tripId: string }) {
       setValue("");
       router.refresh();
     } catch {
-      setError("Error de red. Intenta de nuevo.");
+      toast.error("Error de red. Intenta de nuevo.");
     } finally {
       setLoading(false);
     }
@@ -187,7 +188,7 @@ function AddParticipantSection({ tripId }: { tripId: string }) {
       <div className="flex rounded-lg border border-zinc-200 overflow-hidden text-xs dark:border-zinc-700">
         <button
           type="button"
-          onClick={() => { setMode("email"); setValue(""); setError(null); }}
+          onClick={() => { setMode("email"); setValue(""); }}
           className={`flex-1 py-1.5 font-medium transition-colors ${
             mode === "email" ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900" : "bg-white text-zinc-500 hover:bg-zinc-50 dark:bg-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-700"
           }`}
@@ -196,7 +197,7 @@ function AddParticipantSection({ tripId }: { tripId: string }) {
         </button>
         <button
           type="button"
-          onClick={() => { setMode("ghost"); setValue(""); setError(null); }}
+          onClick={() => { setMode("ghost"); setValue(""); }}
           className={`flex-1 py-1.5 font-medium transition-colors ${
             mode === "ghost" ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900" : "bg-white text-zinc-500 hover:bg-zinc-50 dark:bg-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-700"
           }`}
@@ -229,8 +230,6 @@ function AddParticipantSection({ tripId }: { tripId: string }) {
         </p>
       )}
 
-      {error && <p className="text-xs text-red-500 dark:text-red-400">{error}</p>}
-      {success && <p className="text-xs text-green-600 dark:text-green-400">{success}</p>}
     </form>
   );
 }

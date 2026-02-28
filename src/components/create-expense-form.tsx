@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CURRENCY_OPTIONS } from "@/lib/constants";
+import { toast } from "sonner";
 
 type Participant = { id: string; name: string };
 
@@ -18,21 +19,18 @@ export function CreateExpenseForm({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   // All participants selected by default for split
   const [selectedParticipants, setSelectedParticipants] = useState<string[]>(
     participants.map((p) => p.id),
   );
 
   function openModal() {
-    setError(null);
     setSelectedParticipants(participants.map((p) => p.id));
     setOpen(true);
   }
 
   function closeModal() {
     setOpen(false);
-    setError(null);
   }
 
   function toggleParticipant(id: string) {
@@ -43,14 +41,13 @@ export function CreateExpenseForm({
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
 
     if (selectedParticipants.length === 0) {
-      setError("Debes seleccionar al menos un participante");
-      setLoading(false);
+      toast.error("Debes seleccionar al menos un participante");
       return;
     }
+
+    setLoading(true);
 
     const fd = new FormData(e.currentTarget);
 
@@ -73,14 +70,15 @@ export function CreateExpenseForm({
       const data = (await res.json()) as { error?: string };
 
       if (!res.ok) {
-        setError(data.error ?? "Error al guardar el gasto");
+        toast.error(data.error ?? "Error al guardar el gasto");
         return;
       }
 
       closeModal();
       router.refresh();
+      toast.success("Gasto registrado");
     } catch {
-      setError("Error de red. Intenta de nuevo.");
+      toast.error("Error de red. Intenta de nuevo.");
     } finally {
       setLoading(false);
     }
@@ -186,10 +184,6 @@ export function CreateExpenseForm({
                   ))}
                 </div>
               </div>
-
-              {error && (
-                <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950/50 dark:text-red-400">{error}</p>
-              )}
 
               <div className="flex justify-end gap-2 pt-1">
                 <button

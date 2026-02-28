@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 function toDateInput(date: Date | null | undefined): string {
   if (!date) return "";
@@ -29,14 +30,12 @@ export function AddToItineraryButton({
   const [time, setTime] = useState("");
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const minDate = toDateInput(tripStartDate);
   const maxDate = toDateInput(tripEndDate);
 
   async function handleSubmit() {
     setLoading(true);
-    setError(null);
     try {
       const body: Record<string, string> = { title, itemId };
       if (date) body.activityDate = new Date(date).toISOString();
@@ -52,12 +51,13 @@ export function AddToItineraryButton({
         setDone(true);
         setOpen(false);
         router.refresh();
+        toast.success("Agregado al itinerario");
       } else {
         const data = (await res.json()) as { error?: string };
-        setError(data.error ?? "Error al agregar al itinerario");
+        toast.error(data.error ?? "Error al agregar al itinerario");
       }
     } catch {
-      setError("Error de red. Intenta de nuevo.");
+      toast.error("Error de red. Intenta de nuevo.");
     } finally {
       setLoading(false);
     }
@@ -66,7 +66,7 @@ export function AddToItineraryButton({
   if (done) {
     return (
       <span className="text-xs text-green-600 font-medium dark:text-green-400">
-        ✓ Agregado al itinerario
+        ✓ En itinerario
       </span>
     );
   }
@@ -74,10 +74,7 @@ export function AddToItineraryButton({
   return (
     <div className="flex flex-col gap-2">
       <button
-        onClick={() => {
-          setOpen((v) => !v);
-          setError(null);
-        }}
+        onClick={() => setOpen((v) => !v)}
         className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs text-zinc-600 hover:bg-zinc-50 transition-colors dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
       >
         + Itinerario
@@ -111,10 +108,6 @@ export function AddToItineraryButton({
             />
           </div>
 
-          {error && (
-            <p className="text-xs text-red-500 dark:text-red-400">{error}</p>
-          )}
-
           <div className="flex gap-2">
             <button
               onClick={handleSubmit}
@@ -124,10 +117,7 @@ export function AddToItineraryButton({
               {loading ? "Agregando..." : "Agregar"}
             </button>
             <button
-              onClick={() => {
-                setOpen(false);
-                setError(null);
-              }}
+              onClick={() => setOpen(false)}
               disabled={loading}
               className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs text-zinc-600 hover:bg-white disabled:opacity-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
             >

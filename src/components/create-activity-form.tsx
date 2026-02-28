@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { UploadPhoto } from "@/components/upload-photo";
+import { toast } from "sonner";
 
 export function CreateActivityForm({
   tripId,
@@ -17,25 +18,21 @@ export function CreateActivityForm({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
 
   function openModal() {
-    setError(null);
     setPhotoUrl(null);
     setOpen(true);
   }
 
   function closeModal() {
     setOpen(false);
-    setError(null);
     setPhotoUrl(null);
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
-    setError(null);
 
     const fd = new FormData(e.currentTarget);
 
@@ -66,14 +63,15 @@ export function CreateActivityForm({
       const data = (await res.json()) as { error?: string };
 
       if (!res.ok) {
-        setError(data.error ?? "Error al crear la actividad");
+        toast.error(data.error ?? "Error al crear la actividad");
         return;
       }
 
       closeModal();
       router.refresh();
+      toast.success("Actividad creada");
     } catch {
-      setError("Error de red. Intenta de nuevo.");
+      toast.error("Error de red. Intenta de nuevo.");
     } finally {
       setLoading(false);
     }
@@ -246,12 +244,6 @@ export function CreateActivityForm({
                   />
                 )}
               </div>
-
-              {error && (
-                <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950/50 dark:text-red-400">
-                  {error}
-                </p>
-              )}
 
               <div className="flex justify-end gap-2 pt-1">
                 <button

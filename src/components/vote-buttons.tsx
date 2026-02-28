@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface VoteButtonsProps {
   itemId: string;
@@ -20,11 +21,9 @@ export function VoteButtons({
 }: VoteButtonsProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<"APPROVE" | "REJECT" | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   async function vote(value: "APPROVE" | "REJECT") {
     setLoading(value);
-    setError(null);
 
     try {
       const res = await fetch(`/api/items/${itemId}/vote`, {
@@ -36,13 +35,13 @@ export function VoteButtons({
       const data = (await res.json()) as { error?: string };
 
       if (!res.ok) {
-        setError(data.error ?? "Error al votar");
+        toast.error(data.error ?? "Error al votar");
         return;
       }
 
       router.refresh();
     } catch {
-      setError("Error de red. Intenta de nuevo.");
+      toast.error("Error de red. Intenta de nuevo.");
     } finally {
       setLoading(null);
     }
@@ -99,8 +98,6 @@ export function VoteButtons({
           </span>
         )}
       </p>
-
-      {error && <p className="text-xs text-red-500">{error}</p>}
     </div>
   );
 }
