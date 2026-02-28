@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CURRENCY_OPTIONS } from "@/lib/constants";
+import { DatePicker } from "@/components/date-picker";
 import { toast } from "sonner";
 
 type TripData = {
@@ -121,23 +122,24 @@ export function EditTripForm({ trip }: { trip: TripData }) {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1">
-                  <label htmlFor="edit-startDate" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Inicio</label>
-                  <input
-                    id="edit-startDate" name="startDate" type="date"
-                    defaultValue={toDateInput(trip.startDate)}
-                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
-                  />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label htmlFor="edit-endDate" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Término</label>
-                  <input
-                    id="edit-endDate" name="endDate" type="date"
-                    defaultValue={toDateInput(trip.endDate)}
-                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
-                  />
-                </div>
+              <div className="flex flex-col gap-1">
+                <label htmlFor="edit-startDate" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Inicio</label>
+                <DatePicker
+                  id="edit-startDate"
+                  name="startDate"
+                  defaultValue={toDateInput(trip.startDate)}
+                  placeholder="Seleccionar fecha"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label htmlFor="edit-endDate" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Término</label>
+                <DatePicker
+                  id="edit-endDate"
+                  name="endDate"
+                  defaultValue={toDateInput(trip.endDate)}
+                  placeholder="Seleccionar fecha"
+                />
               </div>
 
               <div className="flex flex-col gap-1">

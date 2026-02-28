@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CURRENCY_OPTIONS } from "@/lib/constants";
+import { DatePicker } from "@/components/date-picker";
 import { toast } from "sonner";
 
 type Participant = { id: string; name: string };
@@ -140,26 +141,26 @@ export function CreateExpenseForm({
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1">
-                  <label htmlFor="paidBy" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Pagado por</label>
-                  <select
-                    id="paidBy" name="paidBy"
-                    className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
-                  >
-                    <option value="">-- Seleccionar --</option>
-                    {participants.map((p) => (
-                      <option key={p.id} value={p.id}>{p.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label htmlFor="expense-date" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Fecha</label>
-                  <input
-                    id="expense-date" name="expenseDate" type="date"
-                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
-                  />
-                </div>
+              <div className="flex flex-col gap-1">
+                <label htmlFor="paidBy" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Pagado por</label>
+                <select
+                  id="paidBy" name="paidBy"
+                  className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
+                >
+                  <option value="">-- Seleccionar --</option>
+                  {participants.map((p) => (
+                    <option key={p.id} value={p.id}>{p.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label htmlFor="expense-date" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Fecha</label>
+                <DatePicker
+                  id="expense-date"
+                  name="expenseDate"
+                  placeholder="Seleccionar fecha (opcional)"
+                />
               </div>
 
               {/* Participants to split among */}

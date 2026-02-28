@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CURRENCY_OPTIONS } from "@/lib/constants";
+import { DatePicker } from "@/components/date-picker";
 import { toast } from "sonner";
 
 export function CreateHotelForm({
@@ -110,25 +111,26 @@ export function CreateHotelForm({
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1">
-                  <label htmlFor="checkInDate" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                    Check-in <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    id="checkInDate" name="checkInDate" type="date" required
-                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
-                  />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label htmlFor="checkOutDate" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                    Check-out <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    id="checkOutDate" name="checkOutDate" type="date" required
-                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
-                  />
-                </div>
+              <div className="flex flex-col gap-1">
+                <label htmlFor="checkInDate" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                  Check-in <span className="text-red-500">*</span>
+                </label>
+                <DatePicker
+                  id="checkInDate"
+                  name="checkInDate"
+                  placeholder="Seleccionar fecha"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label htmlFor="checkOutDate" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                  Check-out <span className="text-red-500">*</span>
+                </label>
+                <DatePicker
+                  id="checkOutDate"
+                  name="checkOutDate"
+                  placeholder="Seleccionar fecha"
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-3">

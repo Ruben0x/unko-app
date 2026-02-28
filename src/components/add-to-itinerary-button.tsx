@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { DatePicker } from "@/components/date-picker";
 import { toast } from "sonner";
 
 function toDateInput(date: Date | null | undefined): string {
@@ -86,13 +87,12 @@ export function AddToItineraryButton({
             <label className="text-[10px] font-medium text-zinc-500 dark:text-zinc-400">
               Fecha (opcional)
             </label>
-            <input
-              type="date"
+            <DatePicker
               value={date}
+              onChange={setDate}
               min={minDate || undefined}
               max={maxDate || undefined}
-              onChange={(e) => setDate(e.target.value)}
-              className="rounded-md border border-zinc-200 px-2 py-1 text-xs text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
+              placeholder="Seleccionar fecha"
             />
           </div>
 

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { UploadPhoto } from "@/components/upload-photo";
+import { DatePicker } from "@/components/date-picker";
 import { toast } from "sonner";
 
 type ActivityData = {
@@ -166,37 +167,35 @@ export function EditActivityForm({
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1">
-                  <label
-                    htmlFor="ea-date"
-                    className="text-xs font-medium text-zinc-700 dark:text-zinc-300"
-                  >
-                    Fecha
-                  </label>
-                  <input
-                    id="ea-date"
-                    name="activityDate"
-                    type="date"
-                    defaultValue={activity.activityDate ?? ""}
-                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
-                  />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label
-                    htmlFor="ea-time"
-                    className="text-xs font-medium text-zinc-700 dark:text-zinc-300"
-                  >
-                    Hora
-                  </label>
-                  <input
-                    id="ea-time"
-                    name="activityTime"
-                    type="time"
-                    defaultValue={activity.activityTime ?? ""}
-                    className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
-                  />
-                </div>
+              <div className="flex flex-col gap-1">
+                <label
+                  htmlFor="ea-date"
+                  className="text-xs font-medium text-zinc-700 dark:text-zinc-300"
+                >
+                  Fecha
+                </label>
+                <DatePicker
+                  id="ea-date"
+                  name="activityDate"
+                  defaultValue={activity.activityDate ?? ""}
+                  placeholder="Seleccionar fecha"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label
+                  htmlFor="ea-time"
+                  className="text-xs font-medium text-zinc-700 dark:text-zinc-300"
+                >
+                  Hora
+                </label>
+                <input
+                  id="ea-time"
+                  name="activityTime"
+                  type="time"
+                  defaultValue={activity.activityTime ?? ""}
+                  className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
+                />
               </div>
 
               <div className="flex flex-col gap-1">

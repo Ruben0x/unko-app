@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CURRENCY_OPTIONS } from "@/lib/constants";
+import { DatePicker } from "@/components/date-picker";
 import { toast } from "sonner";
 
 type Participant = { id: string; name: string };
@@ -156,9 +157,10 @@ export function CreatePaymentForm({
 
               <div className="flex flex-col gap-1">
                 <label htmlFor="paidAt" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Fecha del pago</label>
-                <input
-                  id="paidAt" name="paidAt" type="date"
-                  className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
+                <DatePicker
+                  id="paidAt"
+                  name="paidAt"
+                  placeholder="Seleccionar fecha (opcional)"
                 />
               </div>
 

@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { DatePicker } from "@/components/date-picker";
+import { toast } from "sonner";
 
 const CURRENCIES = [
   { value: "CLP", label: "CLP — Peso Chileno" },
@@ -18,12 +20,10 @@ const CURRENCIES = [
 export default function NewTripPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
-    setError(null);
 
     const fd = new FormData(e.currentTarget);
 
@@ -52,13 +52,13 @@ export default function NewTripPage() {
       const data = (await res.json()) as { id?: string; error?: string };
 
       if (!res.ok) {
-        setError(data.error ?? "Error al crear el viaje");
+        toast.error(data.error ?? "Error al crear el viaje");
         return;
       }
 
       router.push(`/trips/${data.id}`);
     } catch {
-      setError("Error de red. Intenta de nuevo.");
+      toast.error("Error de red. Intenta de nuevo.");
     } finally {
       setLoading(false);
     }
@@ -113,29 +113,26 @@ export default function NewTripPage() {
           </div>
 
           {/* Dates */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1">
-              <label htmlFor="startDate" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                Fecha de inicio
-              </label>
-              <input
-                id="startDate"
-                name="startDate"
-                type="date"
-                className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label htmlFor="endDate" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                Fecha de término
-              </label>
-              <input
-                id="endDate"
-                name="endDate"
-                type="date"
-                className="rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:ring-zinc-500"
-              />
-            </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="startDate" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+              Fecha de inicio
+            </label>
+            <DatePicker
+              id="startDate"
+              name="startDate"
+              placeholder="Seleccionar fecha"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="endDate" className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+              Fecha de término
+            </label>
+            <DatePicker
+              id="endDate"
+              name="endDate"
+              placeholder="Seleccionar fecha"
+            />
           </div>
 
           {/* Currency */}
@@ -170,12 +167,6 @@ export default function NewTripPage() {
               className="resize-none rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-zinc-500"
             />
           </div>
-
-          {error && (
-            <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950/50 dark:text-red-400">
-              {error}
-            </p>
-          )}
 
           <div className="flex justify-end gap-2 pt-1">
             <Link
