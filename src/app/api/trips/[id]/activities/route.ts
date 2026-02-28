@@ -81,7 +81,7 @@ export async function POST(
   if (itemId) {
     const item = await prisma.item.findFirst({
       where: { id: itemId, tripId, status: "APPROVED" },
-      select: { title: true, description: true, location: true },
+      select: { title: true, description: true, location: true, imageUrl: true },
     });
     if (!item) {
       return NextResponse.json({ error: "Item no encontrado o no aprobado" }, { status: 404 });
@@ -89,6 +89,7 @@ export async function POST(
     if (!title || title === item.title) title = item.title;
     if (!description) description = item.description ?? undefined;
     if (!location) location = item.location ?? undefined;
+    if (!photoUrl) photoUrl = item.imageUrl ?? undefined;
   }
 
   const activity = await prisma.activity.create({
