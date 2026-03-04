@@ -32,6 +32,7 @@ export function UploadPhoto({
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const cameraRef = useRef<HTMLInputElement>(null);
 
   async function handleFile(file: File) {
     setError(null);
@@ -93,8 +94,20 @@ export function UploadPhoto({
 
   return (
     <div className="flex flex-col gap-2">
+      {/* Gallery input — no capture, works on all devices */}
       <input
         ref={inputRef}
+        type="file"
+        accept={ALLOWED_MIME_TYPES.join(",")}
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) handleFile(file);
+        }}
+      />
+      {/* Camera input — capture="environment", only triggered on mobile */}
+      <input
+        ref={cameraRef}
         type="file"
         accept={ALLOWED_MIME_TYPES.join(",")}
         capture="environment"
@@ -104,14 +117,26 @@ export function UploadPhoto({
           if (file) handleFile(file);
         }}
       />
-      <button
-        type="button"
-        onClick={() => inputRef.current?.click()}
-        disabled={disabled || uploading}
-        className="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        {uploading ? "Subiendo..." : label}
-      </button>
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={disabled || uploading}
+          className="flex-1 rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-600"
+        >
+          {uploading ? "Subiendo..." : label}
+        </button>
+        {/* Camera button — only visible on mobile (hidden on md+) */}
+        <button
+          type="button"
+          onClick={() => cameraRef.current?.click()}
+          disabled={disabled || uploading}
+          title="Tomar foto"
+          className="md:hidden rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-600 dark:bg-zinc-700 dark:hover:bg-zinc-600"
+        >
+          📷
+        </button>
+      </div>
       {error && <p className="text-xs text-red-500">{error}</p>}
     </div>
   );
