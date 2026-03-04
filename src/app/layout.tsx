@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "UnkoApp",
-  description: "",
+  description: "Una app para dividir gastos en viajes grupales, sin complicaciones.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
