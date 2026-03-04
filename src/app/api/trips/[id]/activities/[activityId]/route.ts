@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { deleteCloudinaryImage } from "@/lib/cloudinary";
 
 async function requireMember(tripId: string, userId: string) {
   return prisma.tripParticipant.findFirst({
@@ -28,7 +29,7 @@ export async function PATCH(
 
   const activity = await prisma.activity.findFirst({
     where: { id: activityId, tripId },
-    select: { id: true },
+    select: { id: true, photoUrl: true },
   });
   if (!activity) {
     return NextResponse.json({ error: "Actividad no encontrada" }, { status: 404 });
@@ -48,6 +49,11 @@ export async function PATCH(
 
   if (body.title !== undefined && !body.title.trim()) {
     return NextResponse.json({ error: "El título es requerido" }, { status: 400 });
+  }
+
+  // Delete old photo from Cloudinary if being replaced
+  if (body.photoUrl !== undefined && body.photoUrl !== activity.photoUrl) {
+    void deleteCloudinaryImage(activity.photoUrl);
   }
 
   const updated = await prisma.activity.update({
@@ -96,12 +102,13 @@ export async function DELETE(
 
   const activity = await prisma.activity.findFirst({
     where: { id: activityId, tripId },
-    select: { id: true },
+    select: { id: true, photoUrl: true },
   });
   if (!activity) {
     return NextResponse.json({ error: "Actividad no encontrada" }, { status: 404 });
   }
 
   await prisma.activity.delete({ where: { id: activityId } });
+  void deleteCloudinaryImage(activity.photoUrl);
   return new NextResponse(null, { status: 204 });
 }

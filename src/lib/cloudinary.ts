@@ -9,6 +9,22 @@ cloudinary.config({
 
 export default cloudinary;
 
+// ─── Delete helper ────────────────────────────────────────────────────────────
+// Extracts the public_id from a Cloudinary URL and destroys the asset.
+// Silently no-ops if url is empty or the public_id cannot be resolved.
+export async function deleteCloudinaryImage(url: string | null | undefined): Promise<void> {
+  if (!url) return;
+  // URL format: .../upload/[v<timestamp>/]<public_id>.<ext>
+  const match = url.match(/\/upload\/(?:v\d+\/)?(.+)\.[^.]+$/);
+  const publicId = match?.[1];
+  if (!publicId) return;
+  try {
+    await cloudinary.uploader.destroy(publicId);
+  } catch (e) {
+    console.error("Cloudinary delete failed:", publicId, e);
+  }
+}
+
 // ─── Upload constraints ────────────────────────────────────────────────────────
 // UPLOAD_MAX_FILE_SIZE is enforced client-side only (UX guard).
 // Cloudinary does NOT include max_file_size in the signed parameter set,

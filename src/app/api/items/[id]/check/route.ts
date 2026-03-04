@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { deleteCloudinaryImage } from "@/lib/cloudinary";
 
 // ─── Validation ────────────────────────────────────────────────────────────────
 
@@ -81,10 +82,13 @@ export async function POST(
   // ── Upsert: create check or update photoUrl ───────────────────────────────────
   const existing = await prisma.check.findUnique({
     where: { userId_itemId: { userId, itemId } },
-    select: { id: true },
+    select: { id: true, photoUrl: true },
   });
 
   if (existing) {
+    if (photoUrl !== existing.photoUrl) {
+      void deleteCloudinaryImage(existing.photoUrl);
+    }
     const check = await prisma.check.update({
       where: { userId_itemId: { userId, itemId } },
       data: { photoUrl: photoUrl ?? null },

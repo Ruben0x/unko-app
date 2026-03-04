@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { deleteCloudinaryImage } from "@/lib/cloudinary";
 
 // ─── DELETE /api/items/[id] ────────────────────────────────────────────────────
 
@@ -17,7 +18,7 @@ export async function DELETE(
 
   const item = await prisma.item.findUnique({
     where: { id: itemId },
-    select: { id: true, tripId: true, createdById: true },
+    select: { id: true, tripId: true, createdById: true, imageUrl: true },
   });
 
   if (!item) {
@@ -43,5 +44,6 @@ export async function DELETE(
   }
 
   await prisma.item.delete({ where: { id: itemId } });
+  void deleteCloudinaryImage(item.imageUrl);
   return new NextResponse(null, { status: 204 });
 }
