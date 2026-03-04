@@ -16,6 +16,7 @@ import { HotelList } from "@/components/hotel-list";
 import { CreateHotelForm } from "@/components/create-hotel-form";
 import { ExpenseList } from "@/components/expense-list";
 import { CreateExpenseForm } from "@/components/create-expense-form";
+import { ItemFilterChips } from "@/components/item-filter-chips";
 import type { ParticipantSummary } from "@/types/trip";
 
 // ─── Tab config ────────────────────────────────────────────────────────────────
@@ -41,7 +42,7 @@ export default async function TripPage({
   if (!session?.user) redirect("/api/auth/signin");
 
   const { tripId } = await params;
-  const { tab: tabParam } = await searchParams;
+  const { tab: tabParam, itemType, itemStatus, search } = await searchParams;
   const activeTab: Tab =
     TABS.find((t) => t.id === tabParam)?.id ?? "propuestas";
 
@@ -221,11 +222,15 @@ export default async function TripPage({
 
             {/* Items list */}
             <div>
-              <div className="mb-6 flex items-center justify-between">
+              <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
                   Propuestas del grupo
                 </h2>
                 <CreateItemForm tripId={tripId} />
+              </div>
+
+              <div className="mb-4">
+                <ItemFilterChips />
               </div>
 
               <Suspense
@@ -239,6 +244,9 @@ export default async function TripPage({
                   isAdmin={isAdmin}
                   tripStartDate={trip.startDate}
                   tripEndDate={trip.endDate}
+                  typeFilter={itemType}
+                  statusFilter={itemStatus}
+                  search={search}
                 />
               </Suspense>
             </div>

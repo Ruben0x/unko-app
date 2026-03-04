@@ -49,8 +49,8 @@ function ItemCard({
 
   return (
     <div className="group rounded-2xl border border-zinc-100 bg-white shadow-sm ring-1 ring-black/3 hover:shadow-md hover:border-zinc-200 transition-all flex flex-col overflow-hidden dark:border-zinc-700 dark:bg-zinc-800 dark:ring-white/5 dark:hover:border-zinc-700">
-      {/* Cover image */}
-      {item.imageUrl && (
+      {/* Cover image / placeholder */}
+      {item.imageUrl ? (
         <div className="relative h-40 w-full">
           <Image
             src={item.imageUrl}
@@ -58,6 +58,18 @@ function ItemCard({
             fill
             className="object-cover"
           />
+        </div>
+      ) : (
+        <div
+          className={`flex h-40 w-full items-center justify-center ${
+            item.type === "FOOD"
+              ? "bg-linear-to-br from-orange-400 to-amber-600"
+              : "bg-linear-to-br from-blue-500 to-indigo-700"
+          }`}
+        >
+          <span className="text-5xl opacity-80 drop-shadow-sm select-none">
+            {item.type === "FOOD" ? "🍽️" : "🏛️"}
+          </span>
         </div>
       )}
 
@@ -214,16 +226,35 @@ export async function ItemList({
   isAdmin = false,
   tripStartDate,
   tripEndDate,
+  typeFilter,
+  statusFilter,
+  search,
 }: {
   currentUserId: string;
   tripId: string;
   isAdmin?: boolean;
   tripStartDate?: Date | null;
   tripEndDate?: Date | null;
+  typeFilter?: string;
+  statusFilter?: string;
+  search?: string;
 }) {
   const [rawItems, registeredParticipants] = await Promise.all([
     prisma.item.findMany({
-      where: { tripId },
+      where: {
+        tripId,
+        ...(typeFilter ? { type: typeFilter } : {}),
+        ...(statusFilter ? { status: statusFilter } : {}),
+        ...(search
+          ? {
+              OR: [
+                { title: { contains: search, mode: "insensitive" } },
+                { description: { contains: search, mode: "insensitive" } },
+                { location: { contains: search, mode: "insensitive" } },
+              ],
+            }
+          : {}),
+      },
       select: {
         id: true,
         title: true,
