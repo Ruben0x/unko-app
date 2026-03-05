@@ -3,6 +3,7 @@ import { DeleteHotelButton } from "@/components/delete-hotel-button";
 import { EditHotelForm } from "@/components/edit-hotel-form";
 import { HotelReservedToggle } from "@/components/hotel-reserved-toggle";
 import { HotelScrollTarget } from "@/components/hotel-scroll-target";
+import { HotelSummaryPanel } from "@/components/hotel-summary-panel";
 import { CURRENCY_SYMBOLS } from "@/lib/constants";
 import type { Currency } from "@/lib/constants";
 
@@ -51,6 +52,17 @@ export async function HotelList({
     );
   }
 
+  // Summary calculations (treat all currencies as-is, no conversion)
+  const totalSum = hotels.reduce((acc, h) => acc + (h.totalPrice ?? 0), 0);
+  const totalNights = hotels.reduce((acc, h) => acc + h.numberOfNights, 0);
+  const hotelsWithPrice = hotels.filter((h) => h.pricePerNight != null);
+  const avgPricePerNight =
+    hotelsWithPrice.length > 0
+      ? hotelsWithPrice.reduce((acc, h) => acc + h.pricePerNight!, 0) / hotelsWithPrice.length
+      : null;
+  // Use CLP symbol as default since we're not converting
+  const summarySymbol = CURRENCY_SYMBOLS["CLP" as Currency] ?? "$";
+
   // Parse UTC date string to avoid timezone offset shifting the day
   const fmtDate = (d: Date) => {
     const [y, m, day] = new Date(d).toISOString().slice(0, 10).split("-").map(Number);
@@ -63,6 +75,13 @@ export async function HotelList({
 
   return (
     <div className="flex flex-col gap-4">
+      <HotelSummaryPanel
+        totalSum={totalSum}
+        avgPricePerNight={avgPricePerNight}
+        totalNights={totalNights}
+        participantCount={participantCount}
+        currencySymbol={summarySymbol}
+      />
       {hotels.map((hotel) => {
         const symbol = CURRENCY_SYMBOLS[hotel.currency as Currency] ?? hotel.currency;
         const pricePerPerson =
