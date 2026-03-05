@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { TripMobileMenu } from "@/components/trip-mobile-menu";
 import { TripBottomNav } from "@/components/trip-bottom-nav";
 import { AutoRefresh } from "@/components/auto-refresh";
+import { GalleryView } from "@/components/gallery-view";
 import { ItemList } from "@/components/item-list";
 import { CreateItemForm } from "@/components/create-item-form";
 import { ManageParticipantsPanel } from "@/components/manage-participants-panel";
@@ -22,12 +23,13 @@ import type { ParticipantSummary } from "@/types/trip";
 
 // ─── Tab config ────────────────────────────────────────────────────────────────
 
-type Tab = "propuestas" | "itinerario" | "hoteles" | "gastos";
+type Tab = "propuestas" | "itinerario" | "hoteles" | "gastos" | "galería";
 const TABS: { id: Tab; label: string }[] = [
   { id: "propuestas", label: "Propuestas" },
   { id: "itinerario", label: "Itinerario" },
   { id: "hoteles", label: "Hoteles" },
   { id: "gastos", label: "Gastos" },
+  { id: "galería", label: "Galería" },
 ];
 
 // ─── Page ──────────────────────────────────────────────────────────────────────
@@ -317,6 +319,13 @@ export default async function TripPage({
               />
             </Suspense>
           </div>
+        )}
+
+        {/* ── Galería ─────────────────────────────────────────────────────── */}
+        {activeTab === "galería" && (
+          <Suspense fallback={<div className="text-sm text-zinc-400 dark:text-zinc-500">Cargando galería...</div>}>
+            <GalleryView tripId={tripId} />
+          </Suspense>
         )}
 
       </main>

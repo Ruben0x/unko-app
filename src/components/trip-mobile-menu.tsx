@@ -9,6 +9,7 @@ const TABS = [
   { id: "itinerario", label: "Itinerario", icon: "🗓️" },
   { id: "hoteles", label: "Hoteles", icon: "🏨" },
   { id: "gastos", label: "Gastos", icon: "💰" },
+  { id: "galería", label: "Galería", icon: "📸" },
 ] as const;
 
 export function TripMobileMenu({
