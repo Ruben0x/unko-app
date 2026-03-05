@@ -14,7 +14,7 @@ export async function GalleryView({ tripId }: { tripId: string }) {
       user: { select: { name: true } },
       item: { select: { title: true } },
     },
-    orderBy: { createdAt: "asc" },
+    orderBy: [{ item: { createdAt: "asc" } }, { createdAt: "asc" }],
   });
 
   const photos = checks.map((c) => ({

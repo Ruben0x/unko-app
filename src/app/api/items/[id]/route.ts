@@ -43,7 +43,11 @@ export async function DELETE(
     return NextResponse.json({ error: "Solo el creador o un admin puede eliminar este ítem" }, { status: 403 });
   }
 
-  await prisma.item.delete({ where: { id: itemId } });
+  await prisma.$transaction([
+    prisma.vote.deleteMany({ where: { itemId } }),
+    prisma.check.deleteMany({ where: { itemId } }),
+    prisma.item.delete({ where: { id: itemId } }),
+  ]);
   void deleteCloudinaryImage(item.imageUrl);
   return new NextResponse(null, { status: 204 });
 }
