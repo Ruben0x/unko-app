@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { TripMobileMenu } from "@/components/trip-mobile-menu";
 import { TripBottomNav } from "@/components/trip-bottom-nav";
+import { AutoRefresh } from "@/components/auto-refresh";
 import { ItemList } from "@/components/item-list";
 import { CreateItemForm } from "@/components/create-item-form";
 import { ManageParticipantsPanel } from "@/components/manage-participants-panel";
@@ -321,6 +322,7 @@ export default async function TripPage({
       </main>
 
       <TripBottomNav tripId={tripId} activeTab={activeTab} />
+      <AutoRefresh />
     </div>
   );
 }
