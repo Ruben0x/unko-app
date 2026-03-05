@@ -16,7 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "UnkoApp",
-  description: "Una app para dividir gastos en viajes grupales, sin complicaciones.",
+  description:
+    "Una app para dividir gastos en viajes grupales, sin complicaciones.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -40,7 +41,13 @@ export default function RootLayout({
       >
         <ThemeProvider>
           {children}
-          <Toaster richColors position="bottom-center" offset={20} />
+          <Toaster
+            richColors
+            position="bottom-center"
+            offset={20}
+            duration={3500}
+            closeButton
+          />
         </ThemeProvider>
         <script
           dangerouslySetInnerHTML={{

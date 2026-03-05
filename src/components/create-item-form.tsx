@@ -53,8 +53,7 @@ const FIELDS: Field[] = [
   {
     id: "externalUrl",
     label: "Enlace externo",
-    type: "url",
-    placeholder: "https://... (opcional)",
+    placeholder: "https://... o www.ejemplo.com (opcional)",
   },
 ];
 
@@ -92,7 +91,8 @@ export function CreateItemForm({ tripId }: { tripId: string }) {
     const lngRaw = (fd.get("locationLng") as string).trim();
     const locationLat = latRaw ? parseFloat(latRaw) : null;
     const locationLng = lngRaw ? parseFloat(lngRaw) : null;
-    const externalUrl = (fd.get("externalUrl") as string).trim();
+    const rawUrl = (fd.get("externalUrl") as string).trim();
+    const externalUrl = rawUrl && !/^https?:\/\//i.test(rawUrl) ? `https://${rawUrl}` : rawUrl;
 
     if (description) body.description = description;
     if (location) body.location = location;
