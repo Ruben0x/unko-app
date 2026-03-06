@@ -26,10 +26,10 @@ import type { ParticipantSummary } from "@/types/trip";
 
 // ─── Tab config ────────────────────────────────────────────────────────────────
 
-type Tab = "home" | "propuestas" | "itinerario" | "gastos" | "galería";
+type Tab = "home" | "actividades" | "itinerario" | "gastos" | "galería";
 const TABS: { id: Tab; label: string }[] = [
   { id: "home", label: "Inicio" },
-  { id: "propuestas", label: "Propuestas" },
+  { id: "actividades", label: "Actividades" },
   { id: "itinerario", label: "Itinerario" },
   { id: "gastos", label: "Gastos" },
   { id: "galería", label: "Galería" },
@@ -50,7 +50,7 @@ export default async function TripPage({
   const { tripId } = await params;
   const { tab: tabParam, itemType, itemStatus, search, hotelId } = await searchParams;
   const activeTab: Tab =
-    TABS.find((t) => t.id === tabParam)?.id ?? "propuestas";
+    TABS.find((t) => t.id === tabParam)?.id ?? "actividades";
 
   // ── Fetch trip + verify membership ──────────────────────────────────────────
   const [trip, myParticipant] = await Promise.all([
@@ -238,14 +238,14 @@ export default async function TripPage({
           </div>
         )}
 
-        {/* ── Propuestas ──────────────────────────────────────────────────── */}
-        {activeTab === "propuestas" && (
+        {/* ── Actividades ──────────────────────────────────────────────────── */}
+        {activeTab === "actividades" && (
           <div className="flex flex-col gap-6">
             {/* Items list */}
             <div>
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                  Propuestas del grupo
+                  Actividades del grupo
                 </h2>
                 <CreateItemForm tripId={tripId} />
               </div>
@@ -256,7 +256,7 @@ export default async function TripPage({
 
               <Suspense
                 fallback={
-                  <div className="text-sm text-zinc-400 dark:text-zinc-500">Cargando propuestas...</div>
+                  <div className="text-sm text-zinc-400 dark:text-zinc-500">Cargando actividades...</div>
                 }
               >
                 <ItemList

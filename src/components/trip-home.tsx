@@ -332,14 +332,14 @@ export async function TripHome({
         </section>
       )}
 
-      {/* ── Sección 2: Propuestas ────────────────────────────────────────── */}
+      {/* ── Sección 2: Actividades ────────────────────────────────────────── */}
       <section>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
-            Propuestas del grupo
+            Actividades del grupo
           </h2>
           <Link
-            href={`/trips/${tripId}?tab=propuestas`}
+            href={`/trips/${tripId}?tab=actividades`}
             className="text-xs text-zinc-400 hover:text-zinc-700 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors"
           >
             Ver todas →
@@ -348,7 +348,7 @@ export async function TripHome({
 
         {items.length === 0 ? (
           <div className="rounded-2xl border-2 border-dashed border-zinc-200 bg-white/60 p-10 text-center dark:border-zinc-700 dark:bg-zinc-800/60">
-            <p className="text-sm text-zinc-400 dark:text-zinc-500">Sin propuestas aún.</p>
+            <p className="text-sm text-zinc-400 dark:text-zinc-500">Sin actividades aún.</p>
           </div>
         ) : (
           <div className="rounded-2xl border border-zinc-100 bg-white shadow-sm ring-1 ring-black/3 overflow-hidden dark:border-zinc-700 dark:bg-zinc-800 dark:ring-white/5">
@@ -356,7 +356,7 @@ export async function TripHome({
               {items.map((item) => (
                 <Link
                   key={item.id}
-                  href={`/trips/${tripId}?tab=propuestas`}
+                  href={`/trips/${tripId}?tab=actividades`}
                   className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-50 transition-colors dark:hover:bg-zinc-700/50"
                 >
                   <span className="text-base shrink-0">{TYPE_ICONS[item.type] ?? "💡"}</span>
@@ -378,10 +378,10 @@ export async function TripHome({
             </div>
             <div className="border-t border-zinc-100 px-4 py-3 dark:border-zinc-700">
               <Link
-                href={`/trips/${tripId}?tab=propuestas`}
+                href={`/trips/${tripId}?tab=actividades`}
                 className="text-xs font-medium text-zinc-500 hover:text-zinc-800 transition-colors dark:text-zinc-400 dark:hover:text-zinc-200"
               >
-                Ver todas las propuestas →
+                Ver todas las actividades →
               </Link>
             </div>
           </div>

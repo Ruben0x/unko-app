@@ -147,7 +147,7 @@ export function ItemFilterChips() {
               type="text"
               value={searchValue}
               onChange={(e) => handleSearch(e.target.value)}
-              placeholder="Buscar propuestas..."
+              placeholder="Buscar actividades..."
               className="w-full rounded-xl border border-zinc-200 bg-white py-2 pl-8 pr-8 text-sm text-zinc-800 placeholder-zinc-400 outline-none transition-colors focus:border-zinc-400 focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-500 dark:focus:ring-zinc-700"
             />
             {searchValue && (

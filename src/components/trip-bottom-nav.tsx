@@ -8,7 +8,7 @@ const LEFT_TABS = [
 ] as const;
 
 const RIGHT_TABS = [
-  { id: "propuestas", label: "Propuestas", icon: "💡" },
+  { id: "actividades", label: "Actividades", icon: "💡" },
   { id: "galería", label: "Galería", icon: "📸" },
 ] as const;
 

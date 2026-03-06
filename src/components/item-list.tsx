@@ -321,7 +321,7 @@ export async function ItemList({
   if (items.length === 0) {
     return (
       <div className="rounded-2xl border-2 border-dashed border-zinc-200 bg-white/60 p-14 text-center dark:border-zinc-700 dark:bg-zinc-800/60">
-        <p className="text-sm text-zinc-400 dark:text-zinc-500">No hay propuestas todavía. ¡Agrega la primera!</p>
+        <p className="text-sm text-zinc-400 dark:text-zinc-500">No hay actividades todavía. ¡Agrega la primera!</p>
       </div>
     );
   }

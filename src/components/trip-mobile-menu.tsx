@@ -7,7 +7,7 @@ import { CurrencySelector } from "@/components/currency-selector";
 
 const TABS = [
   { id: "home", label: "Inicio", icon: "🏠" },
-  { id: "propuestas", label: "Propuestas", icon: "💡" },
+  { id: "actividades", label: "Actividades", icon: "💡" },
   { id: "itinerario", label: "Itinerario", icon: "🗓️" },
   { id: "gastos", label: "Gastos", icon: "💰" },
   { id: "galería", label: "Galería", icon: "📸" },
