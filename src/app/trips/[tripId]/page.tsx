@@ -218,29 +218,29 @@ export default async function TripPage({
 
         {/* ── Home ──────────────────────────────────────────────────────── */}
         {activeTab === "home" && (
-          <Suspense fallback={<div className="text-sm text-zinc-400 dark:text-zinc-500">Cargando...</div>}>
-            <TripHome
-              tripId={tripId}
-              tripStartDate={trip.startDate}
-              tripEndDate={trip.endDate}
-              myParticipantId={myParticipant.id}
-              participants={participantOptions}
-              defaultCurrency={trip.defaultCurrency}
-            />
-          </Suspense>
-        )}
-
-        {/* ── Propuestas ──────────────────────────────────────────────────── */}
-        {activeTab === "propuestas" && (
           <div className="flex flex-col gap-6">
-            {/* Participants — collapsible at the top */}
             <ManageParticipantsPanel
               tripId={tripId}
               participants={participants}
               currentUserId={session.user.id}
               isAdmin={isAdmin}
             />
+            <Suspense fallback={<div className="text-sm text-zinc-400 dark:text-zinc-500">Cargando...</div>}>
+              <TripHome
+                tripId={tripId}
+                tripStartDate={trip.startDate}
+                tripEndDate={trip.endDate}
+                myParticipantId={myParticipant.id}
+                participants={participantOptions}
+                defaultCurrency={trip.defaultCurrency}
+              />
+            </Suspense>
+          </div>
+        )}
 
+        {/* ── Propuestas ──────────────────────────────────────────────────── */}
+        {activeTab === "propuestas" && (
+          <div className="flex flex-col gap-6">
             {/* Items list */}
             <div>
               <div className="mb-4 flex items-center justify-between">
