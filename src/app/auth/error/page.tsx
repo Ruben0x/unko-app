@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 type SearchParams = Promise<{ error?: string }>;
 
 const ERROR_MESSAGES: Record<string, { title: string; description: string }> = {
@@ -27,12 +29,12 @@ export default async function AuthErrorPage({
         <div className="mb-4 text-4xl">🚫</div>
         <h1 className="mb-2 text-xl font-semibold text-zinc-900">{title}</h1>
         <p className="mb-6 text-sm text-zinc-500">{description}</p>
-        <a
+        <Link
           href="/api/auth/signin"
           className="text-sm font-medium text-zinc-900 underline underline-offset-4"
         >
           Volver al inicio de sesión
-        </a>
+        </Link>
       </div>
     </div>
   );
