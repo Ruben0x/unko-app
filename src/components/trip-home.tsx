@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { calculateSettlement } from "@/lib/settlement";
 import { MySettlementBanner } from "@/components/my-settlement-banner";
 import { getMapsUrl } from "@/lib/maps-url";
+import { NearbyActivities } from "@/components/nearby-activities";
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -107,7 +108,7 @@ export async function TripHome({
     // First 10 proposals
     prisma.item.findMany({
       where: { tripId },
-      select: { id: true, title: true, type: true, status: true, location: true },
+      select: { id: true, title: true, type: true, status: true, location: true, locationLat: true, locationLng: true },
       orderBy: { createdAt: "asc" },
       take: 10,
     }),
@@ -200,17 +201,6 @@ export async function TripHome({
     });
   }
 
-  const TYPE_ICONS: Record<string, string> = { PLACE: "📍", FOOD: "🍽️" };
-  const STATUS_COLORS: Record<string, string> = {
-    PENDING: "bg-zinc-100 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-400",
-    APPROVED: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400",
-    REJECTED: "bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400",
-  };
-  const STATUS_LABELS: Record<string, string> = {
-    PENDING: "Pendiente",
-    APPROVED: "Aprobado",
-    REJECTED: "Rechazado",
-  };
 
   return (
     <div className="flex flex-col gap-8">
@@ -332,60 +322,13 @@ export async function TripHome({
         </section>
       )}
 
-      {/* ── Sección 2: Actividades ────────────────────────────────────────── */}
+      {/* ── Sección 2: Cerca de ti ───────────────────────────────────────── */}
       <section>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
-            Actividades del grupo
-          </h2>
-          <Link
-            href={`/trips/${tripId}?tab=actividades`}
-            className="text-xs text-zinc-400 hover:text-zinc-700 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors"
-          >
-            Ver todas →
-          </Link>
-        </div>
-
-        {items.length === 0 ? (
-          <div className="rounded-2xl border-2 border-dashed border-zinc-200 bg-white/60 p-10 text-center dark:border-zinc-700 dark:bg-zinc-800/60">
-            <p className="text-sm text-zinc-400 dark:text-zinc-500">Sin actividades aún.</p>
-          </div>
-        ) : (
-          <div className="rounded-2xl border border-zinc-100 bg-white shadow-sm ring-1 ring-black/3 overflow-hidden dark:border-zinc-700 dark:bg-zinc-800 dark:ring-white/5">
-            <div className="divide-y divide-zinc-100 dark:divide-zinc-700">
-              {items.map((item) => (
-                <Link
-                  key={item.id}
-                  href={`/trips/${tripId}?tab=actividades`}
-                  className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-50 transition-colors dark:hover:bg-zinc-700/50"
-                >
-                  <span className="text-base shrink-0">{TYPE_ICONS[item.type] ?? "💡"}</span>
-                  <span className="flex-1 min-w-0 text-sm font-medium text-zinc-800 truncate dark:text-zinc-200">
-                    {item.title}
-                  </span>
-                  {item.location && (
-                    <span className="hidden sm:block text-xs text-zinc-400 truncate max-w-32 dark:text-zinc-500">
-                      {item.location}
-                    </span>
-                  )}
-                  <span
-                    className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[item.status] ?? STATUS_COLORS.PENDING}`}
-                  >
-                    {STATUS_LABELS[item.status] ?? item.status}
-                  </span>
-                </Link>
-              ))}
-            </div>
-            <div className="border-t border-zinc-100 px-4 py-3 dark:border-zinc-700">
-              <Link
-                href={`/trips/${tripId}?tab=actividades`}
-                className="text-xs font-medium text-zinc-500 hover:text-zinc-800 transition-colors dark:text-zinc-400 dark:hover:text-zinc-200"
-              >
-                Ver todas las actividades →
-              </Link>
-            </div>
-          </div>
-        )}
+        <NearbyActivities
+          items={items}
+          itemsHref={`/trips/${tripId}?tab=actividades`}
+          alwaysOpen
+        />
       </section>
 
       {/* ── Sección 3: Mi liquidación ────────────────────────────────────── */}

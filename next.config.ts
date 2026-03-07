@@ -44,7 +44,7 @@ const securityHeaders = [
   // Disable browser features that this app does not use.
   {
     key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=(), payment=()",
+    value: "camera=(), microphone=(), geolocation=(self), payment=()",
   },
   { key: "Content-Security-Policy", value: csp },
 ];

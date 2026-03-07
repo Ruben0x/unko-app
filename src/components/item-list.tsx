@@ -49,7 +49,7 @@ function ItemCard({
   const canDelete = isOwner || isAdmin;
 
   return (
-    <div className="group rounded-2xl border border-zinc-100 bg-white shadow-sm ring-1 ring-black/3 hover:shadow-md hover:border-zinc-200 transition-all flex flex-col overflow-hidden dark:border-zinc-700 dark:bg-zinc-800 dark:ring-white/5 dark:hover:border-zinc-700">
+    <div id={`item-${item.id}`} className="group rounded-2xl border border-zinc-100 bg-white shadow-sm ring-1 ring-black/3 hover:shadow-md hover:border-zinc-200 transition-all flex flex-col overflow-hidden dark:border-zinc-700 dark:bg-zinc-800 dark:ring-white/5 dark:hover:border-zinc-700">
       {/* Cover image / placeholder */}
       {item.imageUrl ? (
         <div className="relative h-40 w-full">

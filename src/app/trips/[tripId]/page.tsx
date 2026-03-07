@@ -22,6 +22,8 @@ import { TripHome } from "@/components/trip-home";
 import { ExpenseList } from "@/components/expense-list";
 import { CreateExpenseForm } from "@/components/create-expense-form";
 import { ItemFilterChips } from "@/components/item-filter-chips";
+import { NearbyActivitiesServer } from "@/components/nearby-activities-server";
+import { HashHighlight } from "@/components/hash-highlight";
 import type { ParticipantSummary } from "@/types/trip";
 
 // ─── Tab config ────────────────────────────────────────────────────────────────
@@ -241,6 +243,12 @@ export default async function TripPage({
         {/* ── Actividades ──────────────────────────────────────────────────── */}
         {activeTab === "actividades" && (
           <div className="flex flex-col gap-6">
+            <HashHighlight />
+            {/* Nearby activities */}
+            <Suspense fallback={null}>
+              <NearbyActivitiesServer tripId={tripId} alwaysOpen />
+            </Suspense>
+
             {/* Items list */}
             <div>
               <div className="mb-4 flex items-center justify-between">

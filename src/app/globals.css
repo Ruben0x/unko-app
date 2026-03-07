@@ -56,6 +56,16 @@ body {
   font-weight: 600;
 }
 
+/* ─── Nearby activities: highlight card when navigated via hash ─────────────── */
+@keyframes item-highlight {
+  0%   { box-shadow: 0 0 0 3px rgb(113 113 122 / 0.7), 0 0 0 6px rgb(113 113 122 / 0.15); }
+  70%  { box-shadow: 0 0 0 3px rgb(113 113 122 / 0.7), 0 0 0 6px rgb(113 113 122 / 0.15); }
+  100% { box-shadow: none; }
+}
+[id^="item-"]:target {
+  animation: item-highlight 3.8s ease-out forwards;
+}
+
 /* Dark mode overrides (hex exactos del zinc palette) */
 .dark .pac-container {
   background-color: #27272a; /* zinc-800 */

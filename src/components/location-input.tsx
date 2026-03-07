@@ -137,8 +137,29 @@ export function LocationInput({
     }
   }
 
-  function handleBlur() {
+  async function handleBlur() {
+    // Close dropdown after a short delay (allows click on suggestion to register first)
     setTimeout(() => setOpen(false), 150);
+
+    // Auto-geocode: if the user typed text but never picked a suggestion, try the first Photon result
+    if (!displayValue.trim() || lat != null) return;
+
+    try {
+      const params = new URLSearchParams({ q: displayValue.trim(), limit: "1", lang: "en" });
+      const res = await fetch(`https://photon.komoot.io/api/?${params}`, {
+        headers: { Accept: "application/json" },
+      });
+      if (!res.ok) return;
+      const data = (await res.json()) as { features: PhotonFeature[] };
+      const first = data.features?.[0];
+      if (!first) return;
+      const [featureLng, featureLat] = first.geometry.coordinates;
+      setLat(featureLat);
+      setLng(featureLng);
+      onChange?.(displayValue, featureLat, featureLng);
+    } catch {
+      // silently ignore — coordinates remain null
+    }
   }
 
   return (
@@ -163,19 +184,24 @@ export function LocationInput({
         onChange={handleInputChange}
         onBlur={handleBlur}
         autoComplete="off"
-        className="w-full rounded-lg border border-zinc-200 py-2 pl-9 pr-8 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-zinc-500"
+        className="w-full rounded-lg border border-zinc-200 py-2 pl-9 pr-12 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-zinc-500"
       />
 
-      {/* Clear button */}
+      {/* Right-side icons: geocoded indicator or clear button */}
       {displayValue && (
-        <button
-          type="button"
-          onClick={handleClear}
-          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors"
-          aria-label="Limpiar ubicación"
-        >
-          ✕
-        </button>
+        <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+          {lat != null && (
+            <span className="text-xs text-green-500 dark:text-green-400" title="Ubicación confirmada">✓</span>
+          )}
+          <button
+            type="button"
+            onClick={handleClear}
+            className="text-xs text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors"
+            aria-label="Limpiar ubicación"
+          >
+            ✕
+          </button>
+        </div>
       )}
 
       {/* Suggestions dropdown — fixed to escape overflow containers (e.g. modal scroll) */}
