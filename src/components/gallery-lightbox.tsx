@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 
 export type GalleryPhoto = {
   id: string;
@@ -84,14 +85,16 @@ export function GalleryLightbox({
       )}
 
       {/* Image */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        key={photo.id}
-        src={photo.url}
-        alt={`${photo.itemTitle} — ${photo.userName ?? "visita"}`}
-        className="max-h-[80vh] max-w-[90vw] object-contain select-none"
-        draggable={false}
-      />
+      <div key={photo.id} className="relative select-none" style={{ height: "80vh", width: "90vw" }}>
+        <Image
+          src={photo.url}
+          alt={`${photo.itemTitle} — ${photo.userName ?? "visita"}`}
+          fill
+          sizes="90vw"
+          className="object-contain"
+          draggable={false}
+        />
+      </div>
 
       {/* Next arrow */}
       {index < photos.length - 1 && (

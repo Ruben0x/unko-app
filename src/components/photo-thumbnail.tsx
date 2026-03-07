@@ -46,14 +46,13 @@ export function PhotoThumbnail({ url, alt }: { url: string; alt: string }) {
             </button>
 
             {/* Image */}
-            <div className="relative w-full overflow-hidden rounded-2xl shadow-2xl"
-              style={{ aspectRatio: "auto" }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+            <div className="relative w-full overflow-hidden rounded-2xl shadow-2xl" style={{ height: "85vh" }}>
+              <Image
                 src={url}
                 alt={alt}
-                className="max-h-[85vh] w-full object-contain rounded-2xl"
+                fill
+                sizes="100vw"
+                className="object-contain rounded-2xl"
               />
             </div>
 
