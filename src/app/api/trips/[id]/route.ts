@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { deleteCloudinaryImage } from "@/lib/cloudinary";
 
 async function requireAdmin(tripId: string, userId: string) {
   return prisma.tripParticipant.findFirst({
@@ -91,6 +92,23 @@ export async function DELETE(
     return NextResponse.json({ error: "Solo el administrador puede eliminar el viaje" }, { status: 403 });
   }
 
+  // Collect all Cloudinary photo URLs before deleting
+  const [activities, items, checks] = await Promise.all([
+    prisma.activity.findMany({ where: { tripId }, select: { photoUrl: true } }),
+    prisma.item.findMany({ where: { tripId }, select: { imageUrl: true } }),
+    prisma.check.findMany({ where: { item: { tripId } }, select: { photoUrl: true } }),
+  ]);
+
+  // Delete trip from DB (cascade handles all related records)
   await prisma.trip.delete({ where: { id: tripId } });
+
+  // Delete Cloudinary assets after DB deletion (fire-and-forget, non-blocking)
+  const photoUrls = [
+    ...activities.map((a) => a.photoUrl),
+    ...items.map((i) => i.imageUrl),
+    ...checks.map((c) => c.photoUrl),
+  ];
+  await Promise.allSettled(photoUrls.map(deleteCloudinaryImage));
+
   return new NextResponse(null, { status: 204 });
 }

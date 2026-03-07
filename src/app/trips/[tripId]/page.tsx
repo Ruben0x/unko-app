@@ -13,6 +13,7 @@ import { ItemList } from "@/components/item-list";
 import { CreateItemForm } from "@/components/create-item-form";
 import { ManageParticipantsPanel } from "@/components/manage-participants-panel";
 import { EditTripForm } from "@/components/edit-trip-form";
+import { DeleteTripButton } from "@/components/delete-trip-button";
 import { ActivityList } from "@/components/activity-list";
 import { CreateActivityForm } from "@/components/create-activity-form";
 import { HotelList } from "@/components/hotel-list";
@@ -127,6 +128,7 @@ export default async function TripPage({
   );
 
   const editSlot = isAdmin ? <EditTripForm trip={trip} /> : null;
+  const deleteSlot = isAdmin ? <DeleteTripButton tripId={tripId} tripName={trip.name} /> : null;
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#0E1113]">
@@ -166,6 +168,7 @@ export default async function TripPage({
 
           {/* Desktop action buttons — hidden on mobile */}
           <div className="hidden md:flex shrink-0 items-center gap-2">
+            {isAdmin && <DeleteTripButton tripId={tripId} tripName={trip.name} />}
             {isAdmin && <EditTripForm trip={trip} />}
             <CurrencySelector />
             <ThemeToggle />
@@ -192,6 +195,7 @@ export default async function TripPage({
             isAdmin={isAdmin}
             signOutSlot={signOutSlot}
             editSlot={editSlot}
+            deleteSlot={deleteSlot}
           />
         </div>
 

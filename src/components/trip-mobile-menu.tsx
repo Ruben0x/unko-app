@@ -20,6 +20,7 @@ export function TripMobileMenu({
   isAdmin,
   signOutSlot,
   editSlot,
+  deleteSlot,
 }: {
   tripId: string;
   activeTab: string;
@@ -27,6 +28,7 @@ export function TripMobileMenu({
   isAdmin: boolean;
   signOutSlot: React.ReactNode;
   editSlot: React.ReactNode;
+  deleteSlot?: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -116,6 +118,12 @@ export function TripMobileMenu({
           {isAdmin && editSlot && (
             <div className="px-1" onClick={() => setOpen(false)}>
               {editSlot}
+            </div>
+          )}
+
+          {isAdmin && deleteSlot && (
+            <div className="px-1">
+              {deleteSlot}
             </div>
           )}
 
